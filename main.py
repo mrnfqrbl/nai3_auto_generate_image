@@ -3,34 +3,49 @@ import zipfile
 import random
 import time
 
+from pyasn1_modules.rfc5751 import smimeCapabilities
 
+from app.log_config import logger
 from app.tag import 提示词生成器
-
+import traceback
 import json
 from datetime import datetime
 from io import BytesIO
 
 from app.novelai_api import NovelAI_API
 from app.config_manager import ConfigManager
+import sys
+# 全局异常捕获函数
+def global_exception_handler(exctype, value, tb):
+    """
+    全局异常处理函数，捕获程序中未处理的异常并记录日志。
+    """
+    if exctype == UnicodeDecodeError:
+        logger.error(f"捕获到编码错误: {value}")
+    else:
+        logger.error(f"未处理的异常: {exctype.__name__} - {value}")
 
+    logger.error("堆栈信息:")
+    logger.error(''.join(traceback.format_exception(exctype, value, tb)))
+
+    # 选择是否退出程序
+    sys.exit(1)  # 或者使用 `exit(1)` 退出程序
+
+# 注册全局异常处理
+sys.excepthook = global_exception_handler
 
 class ImageGenerator:
-    def __init__(self, config_path: str,):
+    def __init__(self, config_path: str):
         """
         初始化类，加载配置文件，实例化API。
 
         :param config_path: 配置文件路径
-        :param sequence_file: 存储序号的文件路径
         """
-
         self.sequence_file = os.path.join(os.getcwd(), "data", "sequence.json")
-
-        print(f"Sequence file path: {self.sequence_file}")  # 打印路径，调试时可以查看路径是否正确
-
         self.config_path = config_path
         self.token = ""
         self.negative_prompt = "lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, watermark, unfinished, displeasing, chromatic aberration, signature, extra digits, artistic error, username, scan, [abstract], underwear"
-        #默认生成图像数量为1
+        # 默认生成图像数量为1
         self.quantity = 0
         # 加载配置
         self.config_load()
@@ -40,7 +55,10 @@ class ImageGenerator:
 
         # 获取当前日期并初始化图像计数器
         self.current_date = datetime.now().strftime('%Y%m%d')
+        self.f_current_date= datetime.now().strftime('%Y年%m月%d日')
+        logger.info(f"当前日期: {self.f_current_date}")
         self.image_counter = self.load_counter()
+        self.sm=0
 
     def config_load(self):
         """
@@ -52,25 +70,34 @@ class ImageGenerator:
         self.token = config_manager.get("API", "token")
         self.quantity = config_manager.get_int("GENERATION", "quantity")
 
-        print(f"API Token: {self.token}")
-        print(f"总数量: {self.quantity}")
+        logger.debug(f"API Token: {self.token}")
+        logger.info(f"总数量: {self.quantity}")
 
     def load_counter(self):
         """
         加载序号计数器，检查日期是否匹配，如果匹配则返回存储的序号，否则重置为1。
         如果文件不存在，创建新的文件并初始化计数器。
         """
-        print(f"Checking if sequence file exists: {self.sequence_file}")  # 调试打印文件路径
+        logger.debug(f"序号文件路径: {self.sequence_file}")  # 调试打印文件路径
 
+        # 如果序号文件存在，则读取文件
         if os.path.exists(self.sequence_file):
             try:
-                with open(self.sequence_file, 'r') as f:
+                with open(self.sequence_file, 'r',encoding='utf-8') as f:
                     data = json.load(f)
-                    # 如果日期一致，返回存储的序号
-                    if data.get('date') == self.current_date:
-                        return data.get('counter', 1)
-            except (json.JSONDecodeError, IOError):
-                print("警告: 序号文件损坏或无法读取，正在重置计数器。")
+
+                    # 检查文件格式：外层应该是字典
+                    if not isinstance(data, dict):
+                        logger.error(f"序号文件格式错误，期望为字典类型，但读取到的是 {type(data)}")
+                        return 1  # 如果格式错误，直接返回初始序号 1
+
+                    # 检查当前日期是否存在于文件中
+                    if self.current_date in data:
+                        return data[self.current_date]['counter']  # 返回当天的计数器
+                    else:
+                        return 1  # 如果当前日期不在文件中，返回初始序号 1
+            except (json.JSONDecodeError, IOError) as e:
+                logger.warning(f"警告: 序号文件损坏或无法读取，正在重置计数器。错误信息: {e}")
 
         # 如果文件不存在或者损坏，则初始化文件
         self.initialize_counter()
@@ -81,8 +108,7 @@ class ImageGenerator:
         如果序号文件不存在或无法读取，则初始化文件并保存初始序号。
         """
         data = {
-            'date': self.current_date,
-            'counter': 1
+            self.f_current_date: {'date': self.current_date, 'counter': 1}
         }
         # 确保目录存在
         data_folder = os.path.dirname(self.sequence_file)
@@ -90,21 +116,31 @@ class ImageGenerator:
             os.makedirs(data_folder)
 
         # 创建并写入新的序号文件
-        with open(self.sequence_file, 'w') as f:
-            json.dump(data, f, indent=4)
-        print(f"初始化序号文件: {self.sequence_file}")
-
+        with open(self.sequence_file, 'w',encoding='utf-8') as f:
+            json.dump(data, f, indent=4,ensure_ascii=False)
+        logger.info(f"初始化序号文件: {self.sequence_file}")
 
     def save_counter(self):
         """
         保存当前日期和序号到文件。
         """
-        data = {
-            'date': self.current_date,
-            'counter': self.image_counter
-        }
-        with open(self.sequence_file, 'w') as f:
-            json.dump(data, f, indent=4)
+        try:
+            with open(self.sequence_file, 'r',encoding='utf-8') as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, IOError):
+            data = {}
+
+        # 更新当前日期的序号
+        if self.f_current_date in data:
+            data[self.f_current_date]['counter'] = self.image_counter
+        else:
+            data[self.f_current_date] = {'date': self.current_date, 'counter': self.image_counter}
+
+        # 保存更新后的数据
+        with open(self.sequence_file, 'w',encoding='utf-8') as f:
+            json.dump(data, f, indent=4,ensure_ascii=False)
+
+        logger.debug(f"保存序号到文件: {self.sequence_file}")
 
     def generate_img(self, *args, **kwargs):
         # 获取或设置默认参数
@@ -113,6 +149,7 @@ class ImageGenerator:
         动作 = kwargs.get('动作', None)
         质量 = kwargs.get('质量', "best quality, amazing quality, very aesthetic, absurdres")
         proportional = kwargs.get('proportional', "竖向")
+        self.sm=kwargs.get('sm', 0)
 
         提示词=提示词生成器(角色=角色, 画风=画风, 动作=动作, 质量=质量)
         # 使用每次循环时重新生成提示词
@@ -121,18 +158,17 @@ class ImageGenerator:
             prompt = 提示词.提示词组合(是否随机=True)
             # 使用随机种子
             seed = random.randint(1, 1000000)  # 随机种子
-            print(f"第 {i + 1} 张图像生成中，种子: {seed}")
+            logger.info(f"第 {i + 1} 张图像生成中，种子: {seed}")
 
-            print("提示词为:",prompt)
+            logger.debug(f"main-generate_img_提示词为:{prompt}")
             # 调用API生成图像
-            image_data = self.api.generate_image(prompt, seed=seed, proportional=proportional)
+            image_data = self.api.generate_image(prompt, seed=seed, proportional=proportional,smea=self.sm)
 
             if image_data:
-               print(f"第 {i + 1} 张图像生成成功，已返回原始ZIP文件内容！")
-               self.download_img(image_data, seed)  # 下载并保存图像
+                logger.info(f"第 {i + 1} 张图像生成成功，已返回原始ZIP文件内容！")
+                self.download_img(image_data, seed)  # 下载并保存图像
             else:
-               print(f"第 {i + 1} 张图像生成失败。")
-            #self.image_counter += 1
+                logger.error(f"第 {i + 1} 张图像生成失败。")
 
             # 每生成一张图像后延时1秒
             time.sleep(1)
@@ -182,8 +218,8 @@ class ImageGenerator:
                         # 生成文件名，附加种子
                         filename = self.get_filename(seed)
 
-                        date_folder = datetime.now().strftime('%Y%m%d')  # 获取当前日期（年月日）
-                        image_path = os.path.join(save_directory, date_folder, filename)
+
+                        image_path = os.path.join(save_directory, self.f_current_date, filename)
 
                         # 确保保存图像的目录存在
                         os.makedirs(os.path.dirname(image_path), exist_ok=True)
@@ -192,11 +228,14 @@ class ImageGenerator:
                         with open(image_path, "wb") as f:
                             f.write(img_data)
 
-                    print(f"图像已保存至: {image_path}")
+                    logger.info(f"图像已保存至: {image_path}")
                 else:
-                    print("ZIP文件中没有图像。")
+                    logger.error("ZIP文件中没有图像。")
         except Exception as e:
-            print(f"下载图像时出错: {e}")
+
+            logger.error(f"下载图像时出错: {e}")
+            tb_info = traceback.format_exc()
+            logger.error(tb_info)
 
 
 
@@ -207,86 +246,18 @@ if __name__ == "__main__":
 
     # 创建图像生成器实例
     image_gen = ImageGenerator(config_path)
-    角色={
+    with open("data\\tags.json", "r", encoding="utf-8") as file:
+        tags = json.load(file)
+    角色= tags['角色']
+    画风= tags['画风']
+    动作= tags['动作']
+    质量 =tags['质量']
+
+    logger.debug(f"角色:{角色}")
+    logger.debug(f"画风:{画风}")
+    logger.debug(f"动作:{动作}")
+    logger.debug(f"质量:{质量}")
 
 
-        "1": "{ Shigure Kira  (Honkai Impact 3)}",
-        "2": "bailu (honkai: star rail)，",
-        "3": "Nachoneko",
-        "4": "{{{ nachoneko （indie virtual youtuber）}}}",
-        "5": "tashkent_(azur_lane)",
-        "6": "{Cirno (Touhou Project)}",
-        "7": "rosmontis (arknights)",
-        "8": "koharu_(blue_archive)",
-        "9": "{Serika (New Year) (blue archive)}",
-        "10": "{ Kirara   (Genshin Impact)}",
-        "11": "{Griseo (Honkai Impact 3)}",
-        "12": "{Pardofelis_(honkai impact3rd)}",
-        "13": "{nahida_(genshin_impact)}",
-        "14": "{paimon_(genshin_impact)}",
-        "15": "{yaoyao (genshin impact)}",
-        "16": "{ssayu_(genshin_impact)}",
-        "17": "{diona_(genshin_impact)}",
-        "18": "{qiqi_(genshin_impact)}",
-        "19": "{Grain Buds_(arknights)}",
-        "20": "{Warmy_(arknights)}",
-        "21": "{Muelsyse_(arknights)}",
-        "22": "{yunjin_(genshin_impact)}",
-        "23": "{Pudding_(arknights)}",
-        "24": "{Aurora_(arknights)}",
-        "25": "{Nine-Colored Deer_(arknights)}",
-        "26": "{Kazemaru_(arknights)}",
-        "27": "{Goldenglow_(arknights)}",
-        "28": "{Amiya_(arknights)}",
-        "29": "{Scene_(arknights)}",
-        "30": "{Suzuran_(arknights)}",
-        "31": "{Folinic_(arknights)}",
-        "32": "{Catapult_(arknights)}",
-        "33": "{Long Island_(Azur Lane )}",
-        "34": "{Formidable_(Azur Lane )}",
-        "35": "{Yukikaze_(Azur Lane )}",
-        "36": "{Hatsushimo_(Azur Lane )}",
-        "37": "{Akashi_(Azur Lane )}",
-        "38": "{Shimakaze_(Azur Lane )}",
-        "39": "{Kisaragi_(Azur Lane )}",
-        "40": "{Kiyonami_(Azur Lane )}",
-        "41": "{Hamakaze_(Azur Lane )}",
-        "42": "{Arashio_(Azur Lane )}",
-        "43": "{Laffey_(Azur Lane )}",
-        "44": "{Makinami_(Azur Lane )}",
-        "45": "{Kalk_(Azur Lane )}",
-        "46": "{Stremitelny_(Azur Lane )}",
-        "47": "{Kazagumo_(Diligent Domestic Discipline)_(Azur Lane )}",
+    image_gen.generate_img(proportional="竖向",角色=角色,画风=画风,动作=动作,质量=质量,sm=2)
 
-
-    }
-    画风={
-        "1": "[artist:sho_(sho_lwlw)], artist:wlop, [artist:aki99],",
-        "2": " [artist:weri],[artist:hiten],[artist:himitsu_()hi_mi_tsu_2)],[artist:chen bin],[artist:hong_bai],[artist:misheng_liu_yin],[artist:bigxixi]",
-        "3": "[artist:ningen_mame], [artist:weri],[artist:hiten],[artist:himitsu_()hi_mi_tsu_2)],[artist:sho_(sho_lwlw)],[[artist:rhasta]], [artist:wlop],[artist:ke-ta]",
-        "4": "[artist:henreader],[artist:rhasta],[[artist:allenes]],[artist:chen bin],[artist:shirosei_mochi]\n",
-        "5": "[artist:ningen_mame], {{ciloranko}}, [artist:sho_(sho_lwlw)],[[artist:rhasta]], [artist:wlop],[artist:ke-ta],\n",
-        "6": "artist:ciloranko, [artist:tianliang duohe fangdongye], [artist:sho_(sho_lwlw)], [artist:baku-p], [artist:tsubasa_tsubasa],"
-    }
-    质量="best quality, amazing quality, very aesthetic, absurdres"
-    # 设置提示词
-    动作={
-        "1": "1girl,solo,long hair,cat ear fluff,cat ears,lightblue hair,green eyes,{loli},ahoge,looking at viewer,standing on one leg,blush,standing,parted lips,leg up, cowboy shot, {{close-up}}, ,no_panties,tuncensored,pussy ,{Sneakers},{{Pussy object  insertion}},{sex},{anus},{Very thick carrot},{Orgasm}, {shivering},{bedroom},Full body portrait",
-        "2": "1girl,loli,ass focus,(see-through,white pantyhose),side lying,looking at viewer,from below,{{Cat ears}},{sex},{nsfw},{no panties},Pussy, anus,{ Thick Tentacles}, {{Anal insertion}},{No tail},{{Tentacle anal insertion}},clothes_pull,",
-        "3": "1girl, navel, clothes lift, lying,  closed eyes, from below,clothes pull,blush, thighs, shirt lift, on bed, open mouth, underboob, pillow, 1boy, sleeping, indoors, skirt lift,sundress,ong hair,cat ear fluff,cat ears,lightblue hair,(loli:1.1),ahoge,blush,two side up，night,pussy，spread legs,nsfw, best quality, amazing quality, very aesthetic, absurdres,Full body portrait",
-        "4": " {{white stockings}}, {{no underwear}},{No obstruction}, amazing quality, very aesthetic, absurdres, girl, solo, loli, cozy anime bedroom, pastel pink, lavender, and mint green tones, modern furniture with anime-inspired details,  warm and inviting vibe, {no trademark}}, {{no text}}, {{no copyright mark}},{{sitting position}},{spread legs}，{Look at the audience},{sex},{{masturbation}},{Clitoris}, {Anus},{{Shy}},{{ angry}}, {{endure}}, {{pain}}, {{cry}}, {{heartbroken}},{{desperation}},{{Sex toys}}",
-        "5": "1girl,solo,long hair,cat ear fluff,cat ears,(loli:1.1),ahoge ,[[[two side up]]],underwear,bra,ass,white bra,panties,blush,bow,open mouth,braid,bottomless,trembling,white panties,indoors,female pervert,hair bow,pervert,holding,sweat,sideboob,dutch angle,wavy mouth,panties removed,standing,pink shirt,from side,side braid,shirt,underwear only, best quality, amazing quality, very aesthetic, absurdres",
-        "6": "eyes_closed,pussy,1girl,solo,long hair,cat ear fluff,cat ears,lightblue hair,(loli:1.1),ahoge,[[[two side up]]],1girl,t-shirt,nsfw,cameltoe,\n",
-        "7": "1girl,solo,long hair,cat ear fluff,cat ears,(loli:1.1),ahoge,blush,white t-shirt,{{Masturbation}},[[[two side up]]],lie prone on the sofa,clothes are littered,best quality, amazing quality, very aesthetic, absurdres,{Orgasm}, {trembling}, {blushing},{open clothes},pussy, anus,{Urine leaks from the vagina}, {{Semen flows out of the anus}},",
-        "8": "1girl,solo,long hair,cat ear fluff,cat ears,(loli:1.1),ahoge ,[[[two side up]]],anus,ass,black_legwear,blurry_background,book,bookshelf,clothes_pull,feet,legs,legs_up,library,multiple_girls,no_panties,no_shoes,pantyhose,pleated_skirt,pussy,sitting,skirt,soles,thighs,toes,uncensored",
-        "9": "1girl,solo,long hair,cat ear fluff,cat ears,lightblue hair,green eyes,{loli},ahoge ,[[[two side up]]],anus,legs_up,no_panties,pussy,sitting,tuncensored, White silk stockings,{{All fours}},{{View from the back}},{{look behind}}, {{Very thick tentacle}}, {{  tentacle anal insertion}},{sex},{{depth insert}},Bedroom,night,pleated_skirt,{Trembling}, {crying}, {scared},{blush},{extremely painful},{{extremely painful expression}},Insert slowly",
-        "10": "{{all fours}},white stockings, {no underwear}},amazing quality, very aesthetic, absurdres,A girl, solo, loli, {{White socks}},{{sneakers}},{{tentacles}},{{nsfw}},{{All fours}},{{sexual intercourse}}, {{anal sex}},{{back view}}, {{naked lower body}},",
-        "11": "1girl, naked shirt,fake animal ears,pink panties,off-shoulder shirt, smile,shy,blush,looking at viewer, lying,face focus, pov, indoors,stuffed animal,stuffed toy,chick,sunlight,\n",
-        "12": "A girl, solo, loli, bedroom, Small leg lift, White silk socks, {Pink underwear}, Leg slightly rais"
-
-    }
-
-
-    # 生成图像
-
-    image_gen.generate_img(proportional="竖向",角色=角色,画风=画风,动作=动作,质量=质量,)

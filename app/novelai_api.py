@@ -4,9 +4,9 @@ import zipfile
 from datetime import datetime
 from io import BytesIO
 
+from app.log_config import logger
 import requests
 from requests.exceptions import SSLError, RequestException
-from six import print_
 
 
 class NovelAI_API:
@@ -82,12 +82,12 @@ class NovelAI_API:
 
         # 检查步数
         if self.json["parameters"]["steps"] > max_steps:
-            print(f"警告: 步数超过限制，最大步数为 {max_steps}，已自动调整。")
+            logger.warning(f"警告: 步数超过限制，最大步数为 {max_steps}，已自动调整。")
             self.json["parameters"]["steps"] = max_steps
 
         # 检查生成数量
         if self.json["parameters"]["n_samples"] > max_samples:
-            print(f"警告: 生成数量超过限制，最大生成数量为 {max_samples}，已自动调整。")
+            logger.warning(f"警告: 生成数量超过限制，最大生成数量为 {max_samples}，已自动调整。")
             self.json["parameters"]["n_samples"] = max_samples
 
 
@@ -96,7 +96,7 @@ class NovelAI_API:
                        proportional: str = "竖向",
                        new_negative_prompt: str = "",
                        sampling: str = "",
-                       smea:str= 0):
+                       smea:int= 0):
         """
         根据传入的提示词生成图像，并返回原始的ZIP文件响应体。
         :param __prompt: 生成图像的提示词
@@ -133,7 +133,7 @@ class NovelAI_API:
             self.json["parameters"]["width"] = 1024
             self.json["parameters"]["height"] = 1024
         else:
-            print("不支持的图像比例，已使用默认比例。")
+            logger.info("不支持的图像比例，已使用默认比例。")
             pass
         if sampling == "ke":
             self.json["parameters"]["sampler"] = "k_euler"
@@ -144,41 +144,44 @@ class NovelAI_API:
         if sampling == "dmp++2m":
             self.json["parameters"]["sampler"] = "k_dpmpp_2m_sde"
         else:
-            print("不支持的采样器，已使用默认采样器。")
+            logger.info("不支持的采样器，已使用默认采样器。")
             pass
-        # #smea
-        # if smea == 1:
-        #     self.json["parameters"]["sm"] = "true"
-        #     print("启用SMEA")
-        # elif smea == 0:
-        #     self.json["parameters"]["sm"] = "false"
-        #     print("禁用SMEA")
-        # else:
-        #     self.json["parameters"]["sm"] = "false"
-        #     print("不支持的参数，已使用默认参数。")
+        #smea
+        if smea == 1:
+            self.json["parameters"]["sm"] = True
+            logger.debug("启用SMEA")
+        elif smea == 0:
+            self.json["parameters"]["sm"] = False
+            logger.debug("禁用SMEA")
+        elif smea == 2:
+            self.json["parameters"]["sm"] = random.choice([True, False])
+        else:
+            self.json["parameters"]["sm"] = False
+            logger.debug("不支持的参数，已使用默认参数。")
 
         # 验证并调整参数
         self.validate_parameters()
 
         try:
             # 发起POST请求
-            print("-----------------------------------------------------------")
-            print("正在生成图像...")
-            print("参数:",self.json)
-            # print("smea",self.json["parameters"]["sm"])
-            print("采样:",self.json["parameters"]["sampler"])
-            print("种子:",self.json["parameters"]["seed"])
-            print("宽度:",self.json["parameters"]["width"])
-            print("高度:",self.json["parameters"]["height"])
-            print("步数:",self.json["parameters"]["steps"])
-            print("生成数量:",self.json["parameters"]["n_samples"])
-            print("提示词:",self.json["input"])
-            print("负面提示词:",self.json["parameters"]["negative_prompt"])
-            print("-----------------------------------------------------------")
+            logger.info(f"-----------------------------------------------------------")
+            logger.debug(f"参数: {self.json}")
+            logger.info(f"提示词: {self.json['input']}")
+            logger.info(
+                f"smea: {self.json['parameters']['sm']}, "
+                f"采样: {self.json['parameters']['sampler']}, "
+                f"种子: {self.json['parameters']['seed']},\n"
+                f"宽度: {self.json['parameters']['width']}, "
+                f"高度: {self.json['parameters']['height']}, "
+                f"步数: {self.json['parameters']['steps']}"
+            )
+            logger.info(f"负面提示词: {self.json['parameters']['negative_prompt']}")
+            logger.info(f"-----------------------------------------------------------")
 
 
 
-            print("请求参数:", self.json,"请求头：",self.headers,"api:",self.api)
+
+            logger.debug(f"请求参数:{self.json}请求头:{self.headers},api:{self.api}")
             r = requests.post(self.api, json=self.json, headers=self.headers)
 
             r.raise_for_status()  # 确保请求成功
@@ -187,7 +190,7 @@ class NovelAI_API:
             return r.content
 
         except (SSLError, RequestException) as e:
-            print("API请求发生错误:", e)
+            logger.error("API请求发生错误:", e)
             return None
 
 
@@ -204,7 +207,7 @@ if __name__ == "__main__":
     image_data = api.generate_image(prompt, seed=-1,proportional="竖向")  # 使用代号 1 （即 "euler" 采样器 和 "small" 尺寸）
 
     if image_data:
-        print("图像生成成功，已返回原始ZIP文件内容！")
+        logger.debug("图像生成成功，已返回原始ZIP文件内容！")
         # 确保目录存在
         img_directory = 'img'
         if not os.path.exists(img_directory):
@@ -237,11 +240,11 @@ if __name__ == "__main__":
                     with open(image_path, "wb") as f:
                         f.write(img_data)
 
-                print(f"图像已保存至: {image_path}")
+                logger.info(f"图像已保存至: {image_path}")
             else:
-                print("ZIP文件中没有图像。")
+                logger.error("ZIP文件中没有图像。")
     else:
-        print("图像生成失败。")
+        logger.error( "图像生成失败。")
 
 
 

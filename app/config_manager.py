@@ -1,6 +1,6 @@
 import configparser
 import os
-
+from app.log_config import logger
 class ConfigManager:
     def __init__(self, config_path: str):
         self.config_path = config_path
@@ -32,7 +32,7 @@ class ConfigManager:
         # 写入配置文件
         with open(self.config_path, 'w', encoding='utf-8') as configfile:
             self.config.write(configfile)
-        print(f"默认配置已创建，配置文件路径: {self.config_path}")
+        logger.info(f"默认配置已创建，配置文件路径: {self.config_path}")
 
     def get(self, section: str, option: str) -> str:
         return self.config.get(section, option)
