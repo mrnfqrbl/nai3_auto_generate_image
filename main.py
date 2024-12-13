@@ -67,6 +67,11 @@ class ImageGenerator:
 
         # 读取配置文件中的API token和生成图像数量
         self.token = config_manager.get("API", "token")
+        # print("tonken:",self.token.strip())
+        if self.token.strip() == "" or self.token.strip() == "你的api令牌":
+            logger.warning("未设置API Token，请检查配置文件。")
+            time.sleep(5)
+            exit(1)
         self.quantity = config_manager.get_int("GENERATION", "quantity")
 
         logger.debug(f"API Token: {self.token}")
