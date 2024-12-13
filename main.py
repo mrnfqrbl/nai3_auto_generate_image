@@ -1,20 +1,19 @@
-import os
-import zipfile
-import random
-import time
-
-from pyasn1_modules.rfc5751 import smimeCapabilities
-
-from app.log_config import logger
-from app.tag import 提示词生成器
-import traceback
 import json
+import os
+import random
+import sys
+import time
+import traceback
+import zipfile
 from datetime import datetime
 from io import BytesIO
 
-from app.novelai_api import NovelAI_API
 from app.config_manager import ConfigManager
-import sys
+from app.log_config import logger
+from app.novelai_api import NovelAI_API
+from app.tag import 提示词生成器
+
+
 # 全局异常捕获函数
 def global_exception_handler(exctype, value, tb):
     """
@@ -246,8 +245,39 @@ if __name__ == "__main__":
 
     # 创建图像生成器实例
     image_gen = ImageGenerator(config_path)
-    with open("data\\tags.json", "r", encoding="utf-8") as file:
+    # 检查文件是否存在
+    tags_file_path = "data/tags.json"
+    default_tags = {
+        "__注释": "角色：为你喜欢的角色格式如下，画风：为艺术家组合同下，动作：为除开角色画风的其余部分包括服装动作等以及需要叠加覆盖的人物特征，质量：指定生成图片质量的一般不需要改",
+        "角色": {
+            "1": "{yaoyao (genshin impact)}",
+            "2": "bailu (honkai: star rail)"
+        },
+        "画风": {
+            "1": "[artist:sho_(sho_lwlw)], artist:wlop, [artist:aki99]",
+            "2": "[artist:sho_(sho_lwlw)], artist:wlop, [artist:aki99]"
+        },
+        "动作": {
+            "1": "1girl,solo,long hair,cat ear fluff,cat ears,lightblue hair,green eyes,{loli},ahoge,looking at viewer,standing on one leg,blush,standing,parted lips,leg up, cowboy shot, {{close-up}}, ,no_panties,tuncensored,pussy ,{Sneakers},{{Pussy object  insertion}},{sex},{anus},{Very thick carrot},{Orgasm}, {shivering},{bedroom},Full body portrait",
+            "2": "1girl,loli,ass focus,(see-through,white pantyhose),side lying,looking at viewer,from below,{{Cat ears}},{sex},{nsfw},{no panties},Pussy, anus,{ Thick Tentacles}, {{Anal insertion}},{No tail},{{Tentacle anal insertion}},clothes_pull,"
+        },
+        "质量": "best quality, amazing quality, very aesthetic, absurdres"
+    }
+    if not os.path.exists(tags_file_path):
+        # 如果文件不存在，创建文件并写入默认数据
+        os.makedirs(os.path.dirname(tags_file_path), exist_ok=True)  # 确保目录存在
+        with open(tags_file_path, "w", encoding="utf-8") as file:
+            json.dump(default_tags, file, ensure_ascii=False, indent=4)
+        logger.warning(f"文件 {tags_file_path} 不存在，已创建并写入默认数据。")
+    # 读取文件内容
+    with open(tags_file_path, "r", encoding="utf-8") as file:
         tags = json.load(file)
+        if json.dumps(tags, ensure_ascii=False, indent=4).strip() == json.dumps(default_tags, ensure_ascii=False,
+                                                                                indent=4).strip():
+            logger.warning("检测到默认数据，请修改tags.json文件后启动，延时5秒关闭")
+            time.sleep(5)
+            sys.exit()
+
     角色= tags['角色']
     画风= tags['画风']
     动作= tags['动作']
