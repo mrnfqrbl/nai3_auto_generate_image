@@ -4,12 +4,14 @@
 ### 重要提示 切记不要乱改 novelai_api.py  以及main中调用 novelai_api.py 的部分 
 首次 启动生成 cofig.ini和 tags.json
 修改后启动
-ini配置 
+ini配置 ：
+```ini
 [API]
 # 这里填novelai令牌
 token = 你的api令牌
-
+      
 [GENERATION]
 # 这里生成的总次数，同时只能生成一张 同时2需要额外点数 
 如果不是无限小图的订阅不要设置太大的数量
 quantity = 10
+```
