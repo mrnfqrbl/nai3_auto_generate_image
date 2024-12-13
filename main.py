@@ -90,14 +90,20 @@ class ImageGenerator:
                 with open(self.sequence_file, 'r',encoding='utf-8') as f:
                     data = json.load(f)
 
+
                     # 检查文件格式：外层应该是字典
                     if not isinstance(data, dict):
                         logger.error(f"序号文件格式错误，期望为字典类型，但读取到的是 {type(data)}")
                         return 1  # 如果格式错误，直接返回初始序号 1
 
                     # 检查当前日期是否存在于文件中
-                    if self.current_date in data:
-                        return data[self.current_date]['counter']  # 返回当天的计数器
+                    logger.debug(f"data:{data}")
+                    logger.debug(f"current_date:{self.current_date}")
+
+                    date = data[self.f_current_date]['date']
+                    logger.debug(f"date:{date}")
+                    if self.current_date in date:
+                        return data[self.f_current_date]['counter']  # 返回当天的计数器
                     else:
                         return 1  # 如果当前日期不在文件中，返回初始序号 1
             except (json.JSONDecodeError, IOError) as e:
@@ -184,6 +190,7 @@ class ImageGenerator:
         :param seed: 生成图像的种子
         :return: 返回生成的文件名
         """
+        self.image_counter = self.load_counter()
         current_time = datetime.now().strftime('%H-%M-%S')
         filename = f"{self.image_counter:03d}---{current_time}---{seed}.png"
 
