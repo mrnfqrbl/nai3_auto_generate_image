@@ -43,7 +43,7 @@ quantity = 10
 
 # 3.配置tags.json
 
-示例
+示例 注意：tags.josn 内容保持默认无法启动 起码修改一下
 
 ```json
 {
