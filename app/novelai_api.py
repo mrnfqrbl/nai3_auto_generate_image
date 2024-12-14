@@ -4,9 +4,10 @@ import zipfile
 from datetime import datetime
 from io import BytesIO
 
-from app.log_config import logger
 import requests
 from requests.exceptions import SSLError, RequestException
+
+from app.log_config import logger
 
 
 class NovelAI_API:
@@ -21,6 +22,7 @@ class NovelAI_API:
 
         # NovelAI 图像生成 API 的 URL
         self.api = "https://image.novelai.net/ai/generate-image"
+        # self.api="http://127.0.0.1:5000/ai/generate-image"
 
         # 配置请求头，包含授权信息、来源、用户代理等
         self.headers = {
@@ -57,7 +59,7 @@ class NovelAI_API:
 
                 # 配置重缩放参数。通常用于图像的尺寸调整。
                 "cfg_rescale": 0,  # 配置重缩放因子，这里设置为0表示不做任何尺寸调整。
-                "controlnet_strength":1,
+                "controlnet_strength": 1,
 
                 # 噪声调度的算法，用于控制生成过程中噪声的减少方式。
                 "noise_schedule": "karras",  # 使用的噪声调度算法。`karras`算法通常用于优化图像的清晰度。
@@ -70,15 +72,13 @@ class NovelAI_API:
 
             },
         }
+
     def validate_parameters(self):
         """
         验证图像生成请求的参数是否符合 NovelAI 免费账户的限制。
         """
-        # 免费账户图像生成限制
-
         max_steps = 28
         max_samples = 1
-
 
         # 检查步数
         if self.json["parameters"]["steps"] > max_steps:
@@ -90,63 +90,59 @@ class NovelAI_API:
             logger.warning(f"警告: 生成数量超过限制，最大生成数量为 {max_samples}，已自动调整。")
             self.json["parameters"]["n_samples"] = max_samples
 
-
-    def generate_image(self, __prompt: str,
-                       seed: int = -1,
-                       proportional: str = "竖向",
-                       new_negative_prompt: str = "",
-                       sampling: str = "",
-                       smea:int= 0):
+    def merge_negative_prompts(self, new_negative_prompt: str):
         """
-        根据传入的提示词生成图像，并返回原始的ZIP文件响应体。
-        :param __prompt: 生成图像的提示词
-        :param seed: 随机种子，默认为-1，表示使用随机种子
-        :param proportional: 图像比例，默认"竖向"
-        :param new_negative_prompt: 负面提示词
-        :return: 如果成功，返回图像生成的ZIP文件内容；否则返回None
+        合并负面提示词，避免重复。
+        :param new_negative_prompt: 新的负面提示词
         """
-        # 设置随机种子（如果未提供，API会自动生成）
-        if seed == -1:
-            self.json["parameters"]["seed"] = random.randint(0, 9999999999)
-        else:
-            self.json["parameters"]["seed"] = seed
-
-        # 设置图像生成的提示词
-        self.json["input"] = __prompt
-
-        # 合并负面提示词
-        if new_negative_prompt and negative_prompt.strip():
+        if new_negative_prompt and new_negative_prompt.strip():
             existing_negative_prompt = self.json["parameters"].get("negative_prompt", "")
             existing_words = set(existing_negative_prompt.split(", ")) if existing_negative_prompt else set()
-            new_words = set(negative_prompt.split(", "))
+            new_words = set(new_negative_prompt.split(", "))
             merged_words = existing_words.union(new_words)
             self.json["parameters"]["negative_prompt"] = ", ".join(sorted(merged_words))
 
-        # 设置图像生成的比例
-        if proportional == "竖向":
-            self.json["parameters"]["width"] = 832
-            self.json["parameters"]["height"] = 1216
-        elif proportional == "横向":
-            self.json["parameters"]["width"] = 1216
-            self.json["parameters"]["height"] = 832
-        elif proportional == "正方形":
-            self.json["parameters"]["width"] = 1024
-            self.json["parameters"]["height"] = 1024
-        else:
-            logger.info("不支持的图像比例，已使用默认比例。")
-            pass
-        if sampling == "ke":
-            self.json["parameters"]["sampler"] = "k_euler"
-        if sampling == "kea":
-            self.json["parameters"]["sampler"] = "k_euler_ancestral"
-        if sampling == "dmp++2s":
-            self.json["parameters"]["sampler"] = "k_dpmpp_2s_ancestral"
-        if sampling == "dmp++2m":
-            self.json["parameters"]["sampler"] = "k_dpmpp_2m_sde"
-        else:
-            logger.info("不支持的采样器，已使用默认采样器。")
-            pass
-        #smea
+    def set_image_proportions(self, proportional: str):
+        """
+        设置图像的宽度和高度，根据比例调整。
+        :param proportional: 图像比例，可以是"竖向"、"横向"、"正方形"或"随机"
+        """
+        proportions = {
+            "竖向": (832, 1216),
+            "横向": (1216, 832),
+            "正方形": (1024, 1024),
+        }
+        if proportional == "随机":
+            proportional = random.choice(["竖向", "横向", "正方形"])
+
+        width, height = proportions.get(proportional, (832, 1216))
+        self.json["parameters"]["width"] = width
+        self.json["parameters"]["height"] = height
+
+    def set_sampler(self, sampling: str or int):
+        """
+        设置图像生成时的采样器。
+        :param sampling: 采样器类型
+        """
+        samplers = {
+            "ke": "k_euler",
+            "kea": "k_euler_ancestral",
+            "dmp++2s": "k_dpmpp_2s_ancestral",
+            "dmp++2m": "k_dpmpp_2m_sde",
+        }
+        if isinstance(sampling, int):
+            cy = samplers[random.choice(list(samplers.keys()))]
+        if isinstance(sampling, str):
+            cy = samplers.get(sampling, "k_euler")  # 防止key不存在，返回一个默认值
+            logger.debug(f"使用采样器: {cy}")
+
+        self.json["parameters"]["sampler"] = cy
+
+    def set_smea(self, smea: int):
+        """
+        设置SMEA参数。
+        :param smea: 0禁用，1启用，2随机
+        """
         if smea == 1:
             self.json["parameters"]["sm"] = True
             logger.debug("启用SMEA")
@@ -159,6 +155,31 @@ class NovelAI_API:
             self.json["parameters"]["sm"] = False
             logger.debug("不支持的参数，已使用默认参数。")
 
+    def generate_image(self, __prompt: str, seed: int = -1, proportional: str = "竖向", new_negative_prompt: str = "",
+                       sampling: str = "", smea: int = 0):
+        """
+        根据传入的提示词生成图像，并返回原始的ZIP文件响应体。
+        :param __prompt: 生成图像的提示词
+        :param seed: 随机种子，默认为-1，表示使用随机种子
+        :param proportional: 图像比例，默认"竖向"
+        :param new_negative_prompt: 负面提示词
+        :param sampling: 采样器类型
+        :param smea: 是否启用SMEA
+        :return: 如果成功，返回图像生成的ZIP文件内容；否则返回None
+        """
+        self.json["input"] = __prompt
+
+        # 设置随机种子
+        self.json["parameters"]["seed"] = seed if seed != -1 else random.randint(0, 9999999999)
+
+        # 合并负面提示词
+        self.merge_negative_prompts(new_negative_prompt)
+
+        # 设置图像比例、采样器和SMEA
+        self.set_image_proportions(proportional)
+        self.set_sampler(sampling)
+        self.set_smea(smea)
+
         # 验证并调整参数
         self.validate_parameters()
 
@@ -167,36 +188,25 @@ class NovelAI_API:
             logger.info(f"-----------------------------------------------------------")
             logger.debug(f"参数: {self.json}")
             logger.info(f"提示词: {self.json['input']}")
-            logger.info(
-                f"smea: {self.json['parameters']['sm']}, "
-                f"采样: {self.json['parameters']['sampler']}, "
-                f"种子: {self.json['parameters']['seed']},\n"
-                f"宽度: {self.json['parameters']['width']}, "
-                f"高度: {self.json['parameters']['height']}, "
-                f"步数: {self.json['parameters']['steps']}"
-            )
-            logger.info(f"负面提示词: {self.json['parameters']['negative_prompt']}")
-            logger.info(f"-----------------------------------------------------------")
+            logger.debug(f"请求头: {self.headers}")
+            response = requests.post(self.api, headers=self.headers, json=self.json, timeout=120)
 
-
-
-
-            logger.debug(f"请求参数:{self.json}请求头:{self.headers},api:{self.api}")
-            r = requests.post(self.api, json=self.json, headers=self.headers)
-
-            r.raise_for_status()  # 确保请求成功
-
-            # 返回未解压的ZIP文件内容
-            return r.content
-
+            # 检查请求结果
+            if response.status_code == 200:
+                logger.info(f"图像生成成功，正在处理数据...")
+                response.content
+                return response.content
+            else:
+                logger.error(f"请求失败，状态码: {response.status_code}")
+                logger.error(f"返回信息: {response.text}")
         except (SSLError, RequestException) as e:
-            logger.error("API请求发生错误:", e)
-            return None
+            logger.error(f"请求失败: {e}")
+        return None
 
 
 if __name__ == "__main__":
     # 替换为你的API Token和负面提示词
-    token = "pst-CAx3tm93AegYXMiTPfGhPuXHDT6Sga8oITdDfnmQK0Q5dSEp76a5KbbE6uR21LrS"
+    token = "pst-VH5WClfIdwAcfN5PDUJgflU1GGFTiKvtRpxBM2W1fEYnzSp99zNZcjip8npSJPut"
     negative_prompt = "lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, watermark, unfinished, displeasing, chromatic aberration, signature, extra digits, artistic error, username, scan, [abstract], underwear"
 
     # 创建API实例

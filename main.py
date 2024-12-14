@@ -40,24 +40,26 @@ class ImageGenerator:
 
         :param config_path: 配置文件路径
         """
-        self.sequence_file = os.path.join(os.getcwd(), "data", "sequence.json")
         self.config_path = config_path
         self.token = ""
-        self.negative_prompt = "lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, watermark, unfinished, displeasing, chromatic aberration, signature, extra digits, artistic error, username, scan, [abstract], underwear"
-        # 默认生成图像数量为1
         self.quantity = 0
+        self.sm = 0
+        self.保存位置 = r".\img"
+        self.序号文件位置 = r"data\sequence.json"
+        self.tags位置 = r"data\tags.json"
         # 加载配置
-        self.config_load()
-
         # 初始化 API 实例
-        self.api = NovelAI_API(self.token, self.negative_prompt)
+
 
         # 获取当前日期并初始化图像计数器
         self.current_date = datetime.now().strftime('%Y%m%d')
         self.f_current_date= datetime.now().strftime('%Y年%m月%d日')
         logger.info(f"当前日期: {self.f_current_date}")
+
+        self.config_load()
+        self.api = NovelAI_API(self.token)
         self.image_counter = self.load_counter()
-        self.sm=0
+
 
     def config_load(self):
         """
@@ -73,6 +75,17 @@ class ImageGenerator:
             time.sleep(5)
             exit(1)
         self.quantity = config_manager.get_int("GENERATION", "quantity")
+        保存位置_a = config_manager.get("GENERATION", "保存位置")
+        tags位置_a = config_manager.get("GENERATION", "tags位置")
+        序号文件位置_a = config_manager.get("GENERATION", "序号文件位置")
+        # 将保存位置、tags位置和序号文件位置的赋值修改为 os.path.join
+        self.保存位置 = os.path.join(保存位置_a)
+        self.tags位置 = os.path.join(tags位置_a)
+        self.序号文件位置 = os.path.join(序号文件位置_a)
+
+        logger.info(f"保存位置: {self.保存位置}")
+        logger.info(f"tags位置: {self.tags位置}")
+        logger.info(f"序号文件位置: {self.序号文件位置}")
 
         logger.debug(f"API Token: {self.token}")
         logger.info(f"总数量: {self.quantity}")
@@ -82,12 +95,12 @@ class ImageGenerator:
         加载序号计数器，检查日期是否匹配，如果匹配则返回存储的序号，否则重置为1。
         如果文件不存在，创建新的文件并初始化计数器。
         """
-        logger.debug(f"序号文件路径: {self.sequence_file}")  # 调试打印文件路径
+        logger.debug(f"序号文件路径: {self.序号文件位置}")  # 调试打印文件路径
 
         # 如果序号文件存在，则读取文件
-        if os.path.exists(self.sequence_file):
+        if os.path.exists(self.序号文件位置):
             try:
-                with open(self.sequence_file, 'r',encoding='utf-8') as f:
+                with open(self.序号文件位置, 'r', encoding='utf-8') as f:
                     data = json.load(f)
 
 
@@ -100,12 +113,18 @@ class ImageGenerator:
                     logger.debug(f"data:{data}")
                     logger.debug(f"current_date:{self.current_date}")
 
-                    date = data[self.f_current_date]['date']
-                    logger.debug(f"date:{date}")
-                    if self.current_date in date:
+                    date_entry = data.get(self.f_current_date)
+                    if date_entry and date_entry.get("date") == self.current_date:
                         return data[self.f_current_date]['counter']  # 返回当天的计数器
                     else:
                         return 1  # 如果当前日期不在文件中，返回初始序号 1
+
+                    # date = data[self.f_current_date]['date']
+                    # logger.debug(f"date:{date}")
+                    # if self.current_date in date:
+                    #     return data[self.f_current_date]['counter']  # 返回当天的计数器
+                    # else:
+                    #     return 1  # 如果当前日期不在文件中，返回初始序号 1
             except (json.JSONDecodeError, IOError) as e:
                 logger.warning(f"警告: 序号文件损坏或无法读取，正在重置计数器。错误信息: {e}")
 
@@ -121,21 +140,21 @@ class ImageGenerator:
             self.f_current_date: {'date': self.current_date, 'counter': 1}
         }
         # 确保目录存在
-        data_folder = os.path.dirname(self.sequence_file)
+        data_folder = os.path.dirname(self.序号文件位置)
         if not os.path.exists(data_folder):
             os.makedirs(data_folder)
 
         # 创建并写入新的序号文件
-        with open(self.sequence_file, 'w',encoding='utf-8') as f:
+        with open(self.序号文件位置, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4,ensure_ascii=False)
-        logger.info(f"初始化序号文件: {self.sequence_file}")
+        logger.info(f"初始化序号文件: {self.序号文件位置}")
 
     def save_counter(self):
         """
         保存当前日期和序号到文件。
         """
         try:
-            with open(self.sequence_file, 'r',encoding='utf-8') as f:
+            with open(self.序号文件位置, 'r', encoding='utf-8') as f:
                 data = json.load(f)
         except (json.JSONDecodeError, IOError):
             data = {}
@@ -147,12 +166,13 @@ class ImageGenerator:
             data[self.f_current_date] = {'date': self.current_date, 'counter': self.image_counter}
 
         # 保存更新后的数据
-        with open(self.sequence_file, 'w',encoding='utf-8') as f:
+        with open(self.序号文件位置, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4,ensure_ascii=False)
 
-        logger.debug(f"保存序号到文件: {self.sequence_file}")
+        logger.debug(f"保存序号到文件: {self.序号文件位置}")
 
     def generate_img(self, *args, **kwargs):
+
         # 获取或设置默认参数
         角色 = kwargs.get('角色', None)
         画风 = kwargs.get('画风', None)
@@ -160,6 +180,10 @@ class ImageGenerator:
         质量 = kwargs.get('质量', "best quality, amazing quality, very aesthetic, absurdres")
         proportional = kwargs.get('proportional', "竖向")
         self.sm=kwargs.get('sm', 0)
+        new_negative_prompt = kwargs.get('new_negative_prompt', "")
+        sampling = kwargs.get('sampling', "ke")
+        seed_a = kwargs.get('seed', 0)
+        smea = kwargs.get('smea', 0)
 
         提示词=提示词生成器(角色=角色, 画风=画风, 动作=动作, 质量=质量)
         # 使用每次循环时重新生成提示词
@@ -167,14 +191,24 @@ class ImageGenerator:
             # 每次循环重新生成prompt
             prompt = 提示词.提示词组合(是否随机=True)
             # 使用随机种子
-            seed = random.randint(1, 1000000)  # 随机种子
+            if seed_a in (None, 0, "", -1):
+                seed = random.randint(11111, 10000000)
+            elif seed_a >= 10000:
+                seed = seed_a
+            else:
+                seed = random.randint(11111, 10000000)
+                logger.warning(f"警告: 输入的种子 {seed_a} 不在有效范围内，已使用随机种子 {seed} 代替。")
+
+
             logger.info(f"第 {i + 1} 张图像生成中，种子: {seed}")
 
             logger.debug(f"main-generate_img_提示词为:{prompt}")
             # 调用API生成图像
-            image_data = self.api.generate_image(prompt, seed=seed, proportional=proportional,smea=self.sm)
+            image_data = self.api.generate_image(prompt, seed=seed, proportional=proportional, smea=self.sm,
+                                                 sampling=sampling, )
 
             if image_data:
+
                 logger.info(f"第 {i + 1} 张图像生成成功，已返回原始ZIP文件内容！")
                 self.download_img(image_data, seed)  # 下载并保存图像
             else:
@@ -199,17 +233,20 @@ class ImageGenerator:
         self.save_counter()
         return filename
 
-    def download_img(self, img_data: bytes, seed: int, save_directory: str = None):
+    def download_img(self, img_data: bytes, seed: int):
         """
         处理生成的图像数据，保存到本地文件。
 
         :param img_data: 图像数据
         :param seed: 生成图像的种子，附加到文件名
-        :param save_directory: 可选，保存的目录，默认为 None，使用默认目录
+
         """
-        if save_directory is None:
-            root_path = os.getcwd()  # 获取当前工作目录
-            save_directory = os.path.join(root_path, 'img')  # 默认保存路径为 root_path\img
+        logger.info(f"保存位置{self.保存位置}")
+        save_directory = self.保存位置
+        # if save_directory is None:
+        #
+        #
+        logger.info(f"保存目录: {save_directory}类型为: {type(save_directory)}")
 
         # 确保保存图像的目录存在
         if not os.path.exists(save_directory):
@@ -229,7 +266,7 @@ class ImageGenerator:
                         # 生成文件名，附加种子
                         filename = self.get_filename(seed)
 
-
+                        print(save_directory)
                         image_path = os.path.join(save_directory, self.f_current_date, filename)
 
                         # 确保保存图像的目录存在
@@ -257,8 +294,10 @@ if __name__ == "__main__":
 
     # 创建图像生成器实例
     image_gen = ImageGenerator(config_path)
+    tags位置 = image_gen.tags位置
+    logger.info(f"generate_img  保存位置: {image_gen.保存位置}")
     # 检查文件是否存在
-    tags_file_path = "data/tags.json"
+    tags_file_path = tags位置
     default_tags = {
         "__注释": "角色：为你喜欢的角色格式如下，画风：为艺术家组合同下，动作：为除开角色画风的其余部分包括服装动作等以及需要叠加覆盖的人物特征，质量：指定生成图片质量的一般不需要改",
         "角色": {
@@ -300,6 +339,12 @@ if __name__ == "__main__":
     logger.debug(f"动作:{动作}")
     logger.debug(f"质量:{质量}")
 
-
-    image_gen.generate_img(proportional="竖向",角色=角色,画风=画风,动作=动作,质量=质量,sm=2)
-
+    """
+    samplers = {
+    "ke": "k_euler",
+    "kea": "k_euler_ancestral",
+    "dmp++2s": "k_dpmpp_2s_ancestral",
+    "dmp++2m": "k_dpmpp_2m_sde",
+    }
+    """
+    image_gen.generate_img(proportional="随机", 角色=角色, 画风=画风, 动作=动作, 质量=质量, sm=2, seed=0, sampling=1)

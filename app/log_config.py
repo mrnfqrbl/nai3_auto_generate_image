@@ -78,6 +78,5 @@ def setup_logger(debug=False):
 
 
 # 调用 setup_logger 配置日志
-setup_logger(debug=False)
-# setup_logger(debug=True)
-
+# setup_logger(debug=False)
+setup_logger(debug=True)

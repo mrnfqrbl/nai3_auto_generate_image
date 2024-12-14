@@ -25,7 +25,10 @@ class ConfigManager:
             'token': '你的api令牌'  # 请手动填写 token
         }
         self.config['GENERATION'] = {
-            'quantity': '10'  # 默认生成 10 张图像
+            'quantity': '10',  # 默认生成 10 张图像
+            "保存位置": r"D:\xm\nai3_auto_generate_image\img",
+            '序号文件位置': r"D:\xm\nai3_auto_generate_image\data\sequence.json",
+            'tags位置': r'D:\xm\nai3_auto_generate_image\data\tags.json'
         }
 
         # 如果需要更多的路径配置，取消下面的注释
