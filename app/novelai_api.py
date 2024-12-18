@@ -19,6 +19,7 @@ class NovelAI_API:
         """
         # 保存用户的Token
         self.__token = __token
+        self.__negative_prompt = "lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, watermark, unfinished, displeasing, chromatic aberration, signature, extra digits, artistic error, username, scan, [abstract], underwear"
 
         # NovelAI 图像生成 API 的 URL
         self.api = "https://image.novelai.net/ai/generate-image"
@@ -47,7 +48,8 @@ class NovelAI_API:
                 "steps": 28,  # 固定生成28步
                 "seed": 0,  # 随机种子，0表示由API自动生成
                 "n_samples": 1,  # 生成的图像数量
-                "negative_prompt": __negative_prompt,  # 负面提示词
+                "negative_prompt": "lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, watermark, unfinished, displeasing, chromatic aberration, signature, extra digits, artistic error, username, scan, [abstract], underwear",
+                # 负面提示词
                 "qualityToggle": True,  # 启用质量增强模式，以提高生成图像的质量。
                 "sm": False,
                 "sm_dyn": False,
@@ -92,15 +94,23 @@ class NovelAI_API:
 
     def merge_negative_prompts(self, new_negative_prompt: str):
         """
-        合并负面提示词，避免重复。
+        合并负面提示词，避免重复，并附加新的负面提示词到原来的上面。
         :param new_negative_prompt: 新的负面提示词
         """
         if new_negative_prompt and new_negative_prompt.strip():
             existing_negative_prompt = self.json["parameters"].get("negative_prompt", "")
-            existing_words = set(existing_negative_prompt.split(", ")) if existing_negative_prompt else set()
-            new_words = set(new_negative_prompt.split(", "))
-            merged_words = existing_words.union(new_words)
-            self.json["parameters"]["negative_prompt"] = ", ".join(sorted(merged_words))
+
+            # 分割现有的负面提示词并去除空值
+            existing_words = existing_negative_prompt.split(", ") if existing_negative_prompt else []
+
+            # 分割新的负面提示词并去除空值
+            new_words = new_negative_prompt.split(", ")
+
+            # 合并原有负面提示词和新的负面提示词，并去除重复项
+            merged_words = list(set(existing_words + new_words))
+
+            # 更新负面提示词
+            self.json["parameters"]["negative_prompt"] = ", ".join(merged_words)
 
     def set_image_proportions(self, proportional: str):
         """
@@ -155,8 +165,16 @@ class NovelAI_API:
             self.json["parameters"]["sm"] = False
             logger.debug("不支持的参数，已使用默认参数。")
 
+    def set_cfg(self, cfg: int or str):
+        if isinstance(cfg, int):
+            self.json["parameters"]["scale"] = cfg
+        if isinstance(cfg, str) and cfg == "随机":
+            self.json["parameters"]["scale"] = random.randint(3, 10)
+        else:
+            self.json["parameters"]["scale"] = 5
+
     def generate_image(self, __prompt: str, seed: int = -1, proportional: str = "竖向", new_negative_prompt: str = "",
-                       sampling: str = "", smea: int = 0):
+                       sampling: str = "", smea: int = 0, cfg: int or str = 6):
         """
         根据传入的提示词生成图像，并返回原始的ZIP文件响应体。
         :param __prompt: 生成图像的提示词
@@ -173,12 +191,13 @@ class NovelAI_API:
         self.json["parameters"]["seed"] = seed if seed != -1 else random.randint(0, 9999999999)
 
         # 合并负面提示词
-        self.merge_negative_prompts(new_negative_prompt)
+        # self.merge_negative_prompts(new_negative_prompt)
 
         # 设置图像比例、采样器和SMEA
         self.set_image_proportions(proportional)
         self.set_sampler(sampling)
         self.set_smea(smea)
+        self.set_cfg(cfg)
 
         # 验证并调整参数
         self.validate_parameters()

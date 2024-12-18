@@ -183,7 +183,7 @@ class ImageGenerator:
         new_negative_prompt = kwargs.get('new_negative_prompt', "")
         sampling = kwargs.get('sampling', "ke")
         seed_a = kwargs.get('seed', 0)
-        smea = kwargs.get('smea', 0)
+        cfg = kwargs.get('cfg', 6)
 
         提示词=提示词生成器(角色=角色, 画风=画风, 动作=动作, 质量=质量)
         # 使用每次循环时重新生成提示词
@@ -192,11 +192,11 @@ class ImageGenerator:
             prompt = 提示词.提示词组合(是否随机=True)
             # 使用随机种子
             if seed_a in (None, 0, "", -1):
-                seed = random.randint(11111, 10000000)
-            elif seed_a >= 10000:
+                seed = random.randint(11111111, 999999999999)
+            elif seed_a >= 1000000:
                 seed = seed_a
             else:
-                seed = random.randint(11111, 10000000)
+                seed = random.randint(11111111, 999999999999)
                 logger.warning(f"警告: 输入的种子 {seed_a} 不在有效范围内，已使用随机种子 {seed} 代替。")
 
 
@@ -205,7 +205,7 @@ class ImageGenerator:
             logger.debug(f"main-generate_img_提示词为:{prompt}")
             # 调用API生成图像
             image_data = self.api.generate_image(prompt, seed=seed, proportional=proportional, smea=self.sm,
-                                                 sampling=sampling, )
+                                                 sampling=sampling, cfg=cfg)
 
             if image_data:
 
@@ -347,4 +347,5 @@ if __name__ == "__main__":
     "dmp++2m": "k_dpmpp_2m_sde",
     }
     """
-    image_gen.generate_img(proportional="随机", 角色=角色, 画风=画风, 动作=动作, 质量=质量, sm=2, seed=0, sampling=1)
+    image_gen.generate_img(proportional="随机", 角色=角色, 画风=画风, 动作=动作, 质量=质量, sm=2, seed=0, sampling=1,
+                           cfg='随机')
