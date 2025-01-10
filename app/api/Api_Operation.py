@@ -117,7 +117,7 @@ class ApiOperation(NovelAIAPI):
                 "sm":参数["smea"],
             }
 
-            logger.info(f"第 {i + 1} 张图像生成中，种子: {参数["种子"]}")
+            logger.info(f"第 {i + 1} 张图像生成中，种子: {参数['种子']}")
 
             logger.debug(f"main-generate_img_提示词为:{prompt}")
             # 调用API生成图像
