@@ -3,7 +3,6 @@ import os
 import zipfile
 from io import BytesIO
 
-from scipy.stats import logser
 
 from app.utils.log_config import logger
 from datetime import datetime

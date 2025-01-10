@@ -1,0 +1,65 @@
+{
+
+
+  "Generate_Image": {
+    "v3": {
+      "input": "1girl",
+      "model": "nai-diffusion-3",
+      "action": "generate",
+      "parameters": {
+        "width": 832,
+        "height": 1216,
+        "scale": 5,
+        "sampler": "k_euler_ancestral",
+        "steps": 28,
+        "seed": 0,
+        "n_samples": 1,
+        "negative_prompt": "lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, watermark, unfinished, displeasing, chromatic aberration, signature, extra digits, artistic error, username, scan, [abstract], underwear",
+        "qualityToggle": true,
+        "sm": false,
+        "sm_dyn": false,
+        "dynamic_thresholding": false,
+        "legacy": false,
+        "cfg_rescale": 0,
+        "controlnet_strength": 1,
+        "noise_schedule": "karras",
+        "legacy_v3_extend": false,
+        "skip_cfg_above_sigma": null
+      }
+    },
+    "v4": {
+    },
+    "v3_img2img": {
+    },
+    "v4_img2img": {
+    }
+  },
+
+  "upscale": {
+    "height": 1216,
+    "width": 832,
+    "scale": 4,
+    "image": null
+
+  }
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
