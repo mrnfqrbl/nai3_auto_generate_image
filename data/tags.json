@@ -1,0 +1,16 @@
+{
+  "__注释": "角色：为你喜欢的角色格式如下，画风：为艺术家组合同下，动作：为除开角色画风的其余部分包括服装动作等以及需要叠加覆盖的人物特征，质量：指定生成图片质量的一般不需要改",
+  "角色": {
+    "1": "{yaoyao (genshin impact)}",
+    "2": "bailu (honkai: star rail)"
+  },
+  "画风": {
+    "1": "[artist:sho_(sho_lwlw)], ",
+    "2": "[artist:sho_(sho_lwlw)],artist:sho_(sho_lwlw) "
+  },
+  "动作": {
+    "1": "1girl,solo,long hair,cat ear fluff,cat ears,lightblue hair,green eyes,{loli},ahoge,looking at viewer,standing on one leg,blush,standing,parted lips,leg up, cowboy shot, {{close-up}}, ,no_panties,tuncensored,pussy ,{Sneakers},{{Pussy object  insertion}},{sex},{anus},{Very thick carrot},{Orgasm}, {shivering},{bedroom},Full body portrait",
+    "2": "1girl,loli,ass focus,(see-through,white pantyhose),side lying,looking at viewer,from below,{{Cat ears}},{sex},{nsfw},{no panties},Pussy, anus,{ Thick Tentacles}, {{Anal insertion}},{No tail},{{Tentacle anal insertion}},clothes_pull,"
+  },
+  "质量": "best quality, amazing quality, very aesthetic, absurdres"
+}
