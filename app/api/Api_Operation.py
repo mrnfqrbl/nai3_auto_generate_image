@@ -86,8 +86,19 @@ class ApiOperation(NovelAIAPI):
         采样=接收参数["采样"]
         cfg=接收参数["cfg"]
         smea=接收参数["smea"]
-
-        提示词生成器实例=提示词生成器(角色=角色,画风=画风,质量=质量,动作=动作,是否随机=True)
+        角色是否可无 = 接收参数.get('角色是否可无', False)
+        是否指定画风 = 接收参数.get('是否指定画风', False)
+        #注固定类参数 值可以为 false和 数字 “数字位你需要固定的提示词在tags的序号，如果画风输入为artist文件则固定的是画师 数字为画师在artist。json的序号
+        是否指定角色 = 接收参数.get('是否指定角色', False)
+        是否指定动作 = 接收参数.get('是否指定动作', False)
+        角色获取方式 = 接收参数.get('角色获取方式', '随机')
+        动作获取方式 = 接收参数.get('动作获取方式', '随机')
+        画风获取方式 = 接收参数.get('动作获取方式', '随机')#如果输入为 artist文件 则指定无效
+        是否随机组合画师=接收参数.get('是否随机组合画师',False)
+        if 是否随机组合画师:
+            提示词生成器实例=提示词生成器(角色=角色,质量=质量,动作=动作,角色是否可无=角色是否可无,角色获取方式=角色获取方式,动作获取方式=动作获取方式,画风获取方式=画风获取方式,root_dir=self.root_dir)
+        else:
+            提示词生成器实例=提示词生成器(角色=角色,画风=画风,质量=质量,动作=动作,角色是否可无=角色是否可无,角色获取方式=角色获取方式,动作获取方式=动作获取方式,画风获取方式=画风获取方式,root_dir=self.root_dir)
         参数生成器实例=参数生成器(尺寸=尺寸,采样=采样,提示词引导系数=cfg,种子=接收种子,smea=smea)
         用户数据=await self.api_get_user_data()
         logger.debug(f"用户数据为：{用户数据}")
@@ -105,7 +116,7 @@ class ApiOperation(NovelAIAPI):
         logger.info(f"无限生成正常")
         for i in range(self.批量生成次数):
             # 每次循环重新生成prompt
-            prompt = 提示词生成器实例.提示词组合(是否随机=True)
+            prompt = 提示词生成器实例.提示词组合()
             参数=参数生成器实例.获取参数()
             传递参数字典={
                 "prompt":prompt,
@@ -119,7 +130,7 @@ class ApiOperation(NovelAIAPI):
 
             logger.info(f"第 {i + 1} 张图像生成中，种子: {参数['种子']}")
 
-            logger.debug(f"main-generate_img_提示词为:{prompt}")
+            logger.info(f"main-generate_img_提示词为:{prompt}")
             # 调用API生成图像
             await self.单次生成图片(**传递参数字典)
             time.sleep(1)
@@ -176,7 +187,7 @@ if __name__ == '__main__':
            "画风":画风,
            "质量":质量,
            "动作":动作,
-        "seed":0,"尺寸":"随机","采样":0,"cfg":0,"smea":0}
+        "seed":0,"尺寸":"随机","采样":0,"cfg":0,"smea":0,"是否随机组合画师":True}
     asyncio.run(api.批量随机生成图片(**参数))
 
 # "角色":{

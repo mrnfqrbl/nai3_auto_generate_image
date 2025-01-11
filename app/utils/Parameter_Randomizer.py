@@ -102,7 +102,7 @@ class 参数生成器:
                 return self.种子
         else:
 
-            logger.info( f"种子{self.种子}无效，已自动生成一个随机种子")
+            logger.debug( f"种子{self.种子}无效，已自动生成一个随机种子")
             return random.randint(100000001, 1000000000)
     def 生成smea(self):
         if self.smea == 1:
