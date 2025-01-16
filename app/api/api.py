@@ -1,19 +1,23 @@
-
+####库导入
+import asyncio
 import os
 import sys
+from typing import Dict, Any
+import json
+import aiohttp  # 添加aiohttp库
 
-import requests
-
-from app.utils.utils import save_image
+###环境变量设置
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(current_dir, "../../"))
 
-import asyncio
 
-from requests.exceptions import SSLError, RequestException
+###项目模块导入
+
 from app.utils.log_config import logger
-import aiohttp  # 添加aiohttp库
+
+
+
 
 
 class NovelAIAPI:
@@ -23,44 +27,67 @@ class NovelAIAPI:
     _lock_img_enlarge = asyncio.Lock()  # 限制img_enlarge方法的并发
     _lock_subscription = asyncio.Lock()  # 限制subscription方法的并发
     _lock_get_user_data = asyncio.Lock()
+    _lock_api_请求= asyncio.Lock()
 
     def __new__(cls,*args, **kwargs):
 
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            # cls._instance.__init__(*args, **kwargs)  # 调用初始化函数
+            # cls._instance.__init__(*args, **kwargs)  # 这里调用会初始化两次
         return cls._instance
 
     def __init__(self, *args, **kwargs):
-
         """
         初始化API类，配置请求的头信息和常规参数。
         :param __token: 用户API Token，用于授权访问API
         """
+        self.logger = logger
+        self.__token = kwargs.get("__token", "1211113")
+        self.环境 = kwargs.get("环境", "正式")
+        self.debug = kwargs.get("debug", False)
+        if self.debug:
+            logger.level("DEBUG")
 
+        logger.debug(f"令牌：{self.__token}, 环境：{self.环境}")
 
+        # 定义不同环境的 API URL
+        api_urls = {
+            "测试": {
+                "api_image": "http://127.0.0.1:2800/ai/generate-image",
+                "api_user_data": "http://127.0.0.1:2800/user/data",
+                "api_image_enlarge": "http://127.0.0.1:2800/ai/upscale",
+                "api_subscription": "http://127.0.0.1:2800/user/subscription",
+            },
+            "代理": {
+                "api_image": "https://nai-image-api.mrnf.xyz/ai/generate-image",
+                "api_user_data": "https://nai-api.mrnf.xyz/user/data",
+                "api_image_enlarge": "https://nai-api.mrnf.xyz/ai/upscale",
+                "api_subscription": "https://nai-api.mrnf.xyz/user/subscription",
+            },
+            "正式": {
+                "api_image": "https://image.novelai.net/ai/generate-image",
+                "api_user_data": "https://api.novelai.net/user/data",
+                "api_image_enlarge": "https://api.novelai.net/ai/upscale",
+                "api_subscription": "https://api.novelai.net/user/subscription",
+            },
+        }
 
-        self.__token = kwargs.get("__token","1211113")
-        self.test = kwargs.get("test",False)
-        logger.debug(f"令牌：{self.__token},测试：{self.test}")
-        if self.test == True:
+        # 设置默认环境为测试
+        default_env = "测试"
 
-            self.api_image = "http://127.0.0.1:2800/ai/generate-image"  # 图像生成API URL
-            self.api_user_data = "http://127.0.0.1:2800/user/data"  # 用户数据API URL
-            self.api_image_enlarge = "http://127.0.0.1:2800/ai/upscale"
-            self.api_subscription = "http://127.0.0.1:2800/user/subscription"
-            logger.info(f"当前是测试模式")
-
+        # 根据环境参数选择对应的 API URL
+        env_config = api_urls.get(self.环境, api_urls[default_env])
+        if self.环境 not in api_urls:
+            logger.info(f"当前环境 '{self.环境}' 未知，使用默认环境 '{default_env}' 配置")
         else:
+            logger.info(f"当前环境：{self.环境}模式")
 
-            self.api_image = "https://image.novelai.net/ai/generate-image"  # 图像生成API URL
-            self.api_user_data = "https://api.novelai.net/user/data"  # 用户数据API URL
-            self.api_image_enlarge = "https://api.novelai.net/ai/upscale"
-            self.api_subscription = "https://api.novelai.net/user/subscription"
-            logger.info(f"当前是正式模式")
+        self.api_image = env_config["api_image"]
+        self.api_user_data = env_config["api_user_data"]
+        self.api_image_enlarge = env_config["api_image_enlarge"]
+        self.api_subscription = env_config["api_subscription"]
 
         logger.info(f"{'-' * 50}")
-
 
         # 配置请求头
         self.headers = {
@@ -71,66 +98,112 @@ class NovelAIAPI:
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
             "Content-Type": "application/json",
         }
-        #获取信息
-        # self.用户数据= asyncio.run(self.get_user_data())
-        # self.无限生成 =self.用户数据["subscription"]["perks"]["unlimitedImageGeneration"]
-        # self.订阅 = self.用户数据["subscription"]["tier"]
-        #
-        #
-        # logger.info(f"-----------------------------------------------------------")
-        #
-    def aaa(self,json):
-        logger.info(f"-----------------------------------------------------------")
-        logger.info(f"请求头：{self.headers}")
-        logger.info(f"请求参数: {json}")
-        response = requests.post(self.api_image, headers=self.headers, json=json, timeout=120)
-        if response.status_code == 200:
-            logger.info(f"图像生成成功，正在处理数据...")
-            return response.content
-        else:
-            logger.error(f"请求失败，状态码: {response.status_code}")
-            logger.error(f"返回信息: {response.text}")
-            return None
 
-    async def api_generate_image(self, json_payload: dict,debug=False):
+
+
+    async def api_请求(self, 请求信息: Dict[str, Any], debug: bool = False) -> Dict[str, Any]:
         """
-        根据传入的参数生成图像，并返回原始的ZIP文件响应体。
-        :param debug:
-        :param json_payload: 请求的参数字典，包含所有生成图像所需的配置
-        :return: 如果成功，返回图像生成的ZIP文件内容；否则返回None
+        接收请求信息并发送请求，添加重试机制，并统一返回格式，包含完整的响应对象。
+
+        Args:
+            请求信息: 包含请求信息的字典，例如 {"请求方法": "GET", "请求url": "...", "headers": {...}, "data": {...}, "json": {...}}
+            debug: 是否开启调试模式，输出调试信息。
+
+        Returns:
+            Dict[str, Any]: 包含请求状态、消息、数据和完整响应对象的字典。
         """
-        async with self._lock_generate_image:  # 使用锁限制并发
-            try:
-                # 发起POST请求
-                logger.info(f"-----------------------------------------------------------")
-                logger.debug(f"请求参数: {json_payload}")
-                logger.debug(f"请求头: {self.headers}")
-                logger.debug(f"请求API: {self.api_image}")
-                async with aiohttp.ClientSession() as session:  # 使用aiohttp进行异步请求
-                    async with session.post(self.api_image, headers=self.headers, json=json_payload, timeout=120) as response:
-                        # 检查请求结果
-                        if response.status == 200:
-                            logger.info(f"图像生成成功，正在处理数据...")
+        logger.info(f"debug={debug}")
+
+        async with self._lock_api_请求:
+            最大重试次数 = 3
+            重试次数 = 0
+            重试延迟 = 1
+
+            while 重试次数 <= 最大重试次数:
+                try:
+                    请求方法 = 请求信息.get("请求方法", "GET")
+                    请求url = 请求信息.get("请求url")
+                    请求头 = self.headers
+                    请求数据 = 请求信息.get("请求数据", None)
+                    请求json = 请求信息.get("请求json", None)
+                    请求查询信息 = 请求信息.get("请求查询信息", None)
+
+                    if not 请求url:
+                        return {"状态": "失败", "消息": "请求url为空，请检查请求信息", "数据": None, "response": None}
+
+
+                    self.logger.debug(f"请求方法: {请求方法}, 请求URL: {请求url}, headers: {请求头}, data: {请求数据}, json: {请求json}, params: {请求查询信息}")
+
+                    async with aiohttp.ClientSession() as session:
+                        async with session.request(
+                                method=请求方法,
+                                url=请求url,
+                                headers=请求头,
+                                data=请求数据,
+                                json=请求json,
+                                params=请求查询信息,
+                        ) as response:
                             if debug:
-                                try:
-                                    encoding = response.charset or "utf-8"
-                                    text = await response.text(encoding=encoding)
-                                    logger.debug(f"返回信息: {text}")
-                                    return type(text) # 返回 text 的类型
-                                except UnicodeDecodeError as e:
-                                    logger.warning(f"解码错误")
-                                    data = await response.read()
-                                    logger.debug(f"返回数据类型: {type(data)}")
-                                    return data
-                            return await response.read()
-                        else:
-                            logger.error(f"请求失败，状态码: {response.status}")
-                            logger.error(f"返回信息: {await response.text()}")
-            except (SSLError, RequestException) as e:
-                logger.error(f"请求失败: {e}")
-            except Exception as e:
-                logger.error(f"请求失败: {e}")
-            return None
+                                self.logger.debug(f"响应状态码: {response.status}")
+                            response.raise_for_status()  # 如果状态码不是 2xx，则抛出异常
+
+                            # 读取响应体，并根据 Content-Type 选择合适的处理方式
+                            content_type = response.headers.get('Content-Type', '').lower()
+                            # logger.info(f"content_type={content_type}")
+                            if content_type.startswith('application/json'):
+                                # logger.info(f"这是json-if")
+                                # logger.info(f"原始响应体={response.text}")
+                                response_body = await response.json()
+                                # logger.info(f"response_body={response_body}")
+
+                            elif content_type.startswith('text/'):
+                                # logger.info(f"这是text-if")
+                                response_body = await response.text()
+
+                            else:
+                                # logger.info(f"这是else-if")
+                                response_body = await response.read()
+
+                            return {
+                                "状态": "成功",
+                                "消息": "请求成功",
+                                "状态码": response.status,
+                                "响应体": response_body,
+                                "响应体类型": content_type
+                            }
+
+                except aiohttp.ClientError as e:
+
+                    self.logger.debug(f"请求失败 (重试 {重试次数 + 1}/{最大重试次数}): {e}")
+                    重试次数 += 1
+                    if 重试次数 <= 最大重试次数:
+                        await asyncio.sleep(重试延迟)
+                    else:
+                        self.logger.error(f"所有重试都失败: {e}")
+                        return {"状态": "失败", "消息": f"所有重试都失败: {e}", "数据": None, "response": None}
+                except Exception as e:
+                    self.logger.error(f"请求过程中发生未知错误: {e}")
+                    return {"状态": "失败", "消息": f"请求过程中发生未知错误: {e}", "数据": None, "response": None}
+
+
+    async def api_generate_image(self, json_payload: dict):
+            """
+            根据传入的参数生成图像，并返回原始的ZIP文件响应体。
+            :param debug:
+            :param json_payload: 请求的参数字典，包含所有生成图像所需的配置
+            :return: 如果成功，返回图像生成的ZIP文件内容；否则返回None
+            """
+            async with self._lock_generate_image:  # 使用锁限制并发
+                请求信息= {
+                    "请求方法": "POST",
+                    "请求url": self.api_image,
+                    "请求头": self.headers,
+                    "请求json": json_payload,
+                }
+                返回= await self.api_请求(请求信息= 请求信息, debug=True)
+
+                return 返回.get("响应体",None)
+
 
     async def api_get_user_data(self):
         """
@@ -138,43 +211,26 @@ class NovelAIAPI:
         :return: 如果成功，返回用户数据；否则返回None
         """
         async with self._lock_get_user_data:  # 使用锁限制并发
-            try:
-                # 发起GET请求获取用户数据
-                logger.info(f"请求用户数据...")
-
-                async with aiohttp.ClientSession() as session:  # 使用aiohttp进行异步请求
-                    async with session.get(self.api_user_data, headers=self.headers, timeout=120) as response:
-                        # 检查请求结果
-                        if response.status == 200:
-                            logger.debug(f"用户数据获取成功，正在处理数据...")
-                            return await response.json()  # 返回JSON格式的用户数据
-                        else:
-                            logger.error(f"请求失败，状态码: {response.status}")
-                            logger.error(f"返回信息: {await response.text()}")
-            except (SSLError, RequestException) as e:
-                logger.error(f"请求失败: {e}")
-            return None
-
+            请求信息= {
+                "请求方法": "GET",
+                "请求url": self.api_user_data,
+                "请求头": self.headers,
+            }
+            返回=await self.api_请求(请求信息= 请求信息,debug=True)
+            return  返回.get("响应体", None)
     async def api_dianshu(self):
         """
         获取用户订阅情况。
         :return: 如果成功，返回订阅数据；否则返回None
         """
         async with self._lock_subscription:  # 使用锁限制并发
-            try:
-                async with aiohttp.ClientSession() as session:  # 使用aiohttp进行异步请求
-                    async with session.get(self.api_subscription, headers=self.headers, timeout=120) as response:
-                        if response.status == 200:
-                            logger.debug(f"用户数据获取成功，正在处理数据...")
-                            return await response.json()  # 返回JSON格式的用户数据
-                        else:
-                            logger.error(f"请求失败，状态码: {response.status}")
-                            logger.error(f"返回信息: {await response.text()}")
-            except (SSLError, RequestException) as e:
-                logger.error(f"请求失败: {e}")
-            except Exception as e:
-                logger.error(f"捕获到异常: {e}")
-
+            请求信息= {
+                "请求方法": "GET",
+                "请求url": self.api_subscription,
+                "请求头": self.headers,
+            }
+            返回=await self.api_请求(请求信息= 请求信息, debug=True)
+            return 返回.get("响应体",None)
     async def api_img_enlarge(self, json_payload: dict):
         """
         图片放大功能
@@ -182,30 +238,20 @@ class NovelAIAPI:
         :return: 返回放大后的图像数据
         """
         async with self._lock_img_enlarge:  # 使用锁限制并发
-            try:
-                async with aiohttp.ClientSession() as session:  # 使用aiohttp进行异步请求
-                    async with session.post(self.api_image_enlarge, headers=self.headers, json=json_payload, timeout=120) as response:
-                        if response.status == 200:
-                            return await response.read()  # 读取响应内容
-                        else:
-                            logger.error(f"请求失败，状态码: {response.status}")
-                            logger.error(f"返回信息: {await response.text()}")
-            except (SSLError, RequestException) as e:
-                logger.error(f"请求失败: {e}")
-            except Exception as e:
-                logger.error(f"捕获到异常: {e}")
+            请求信息= {
+                "请求方法": "POST",
+                "请求url": self.api_image_enlarge,
+                "请求头": self.headers,
+                "请求json": json_payload,
+            }
+            返回=await self.api_请求(请求信息= 请求信息, debug=True)
+            return 返回.get("响应体",None)
 
 
 # 使用示例：
 if __name__ == "__main__":
     # #api=NovelAIAPI(__token="123")
     api实例 = NovelAIAPI(__token="pst-YUJeMro0TENiUqkk76EcANMQpNKvbXkCiMtXRa8kPdWtNLr8ZSha5oKeY6gUQrCj")
-    json={'input': '1girl',
-          'model': 'nai-diffusion-3',
-          'action': 'generate',
-          'parameters':
-              {'width': 832, 'height': 1216, 'scale': 5, 'sampler': 'dpm2msde', 'steps': 28, 'seed': 552266196, 'n_samples': 1, 'negative_prompt': 'lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, watermark, unfinished, displeasing, chromatic aberration, signature, extra digits, artistic error, username, scan, [abstract],', 'qualityToggle': True, 'sm': False, 'sm_dyn': False, 'dynamic_thresholding': False, 'legacy': False, 'cfg_rescale': 0, 'controlnet_strength': 1, 'noise_schedule': 'karras', 'legacy_v3_extend': False, 'skip_cfg_above_sigma': None, 'smea': False}}
-    logger.info(type(json))
     json=  {
         "input": "1girl",  # 用户提供的生成图像提示词
         "model": "nai-diffusion-3",  # 使用的模型版本

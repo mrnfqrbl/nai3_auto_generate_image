@@ -1,8 +1,6 @@
 import json
 import random
 
-from loguru import logger
-
 
 class 提示词生成器:
     def __init__(self, *args, **kwargs):
@@ -80,7 +78,10 @@ class 提示词生成器:
         self.角色是否可无 = kwargs.get('角色是否可无', False)
         self.是否指定画风 = kwargs.get('是否指定画风', False)
         #注固定类参数 值可以为 false和 数字 “数字位你需要固定的提示词在tags的序号，如果画风输入为artist文件则固定的是画师 数字为画师在artist。json的序号
+        #self.是否指定角色 = str(kwargs.get('是否指定角色', False))
         self.是否指定角色 = kwargs.get('是否指定角色', False)
+        #print(f"tag指定角色为：{self.是否指定角色}")
+        #print(f"tag指定角色类型为：{type(self.是否指定角色)}")
         self.是否指定动作 = kwargs.get('是否指定动作', False)
         self.角色获取方式 = kwargs.get('角色获取方式', '随机')
         self.动作获取方式 = kwargs.get('动作获取方式', '随机')
@@ -117,26 +118,59 @@ class 提示词生成器:
         except Exception as e:
             raise e
     def 提示词组合(self):
+
+
         提取角色=self.角色提取()
+
         提取画风=self.画风提取()
         提取动作=self.动作提取()
-        返回=f"{提取角色},{提取画风},{提取动作}，{self.质量}"
+        if self.角色是否可无:
+            if random.random() > 0.35:  # 随机决定是否添加角色
+                返回=f"{提取角色},{提取画风},{提取动作}，{self.质量}"
+            else:
+                返回=f"{提取画风},{提取动作}，{self.质量}"
+        else:
+            返回=f"{提取角色},{提取画风},{提取动作}，{self.质量}"
         return 返回
+
+
     def 角色提取(self):
         if self.角色:
             if isinstance(self.角色, dict):
+                if isinstance(self.是否指定角色, int):
+                    指定角色=str(self.是否指定角色)
+
+
+                    #print(f"tag角色为字典，指定角色为：{指定角色}")
+                    keys = list(self.角色.keys())
+                    #print(f"tag角色为字典，列表：{keys}")
+
+                    key = 指定角色
+                    #print(f"tag角色为字典，key：{key}")
+                    if key in self.角色: # 检查键是否存在于字典中
+                        #print(f"角色为字典，key：{key}")
+                        self.提取的角色 = self.角色[key]
+                        return self.提取的角色
+                    else:
+                        pass
+                        #print(f"不对key:{key}")
+
+
+
+                #print(f"tag角色为字典，未指定角色，获取方式为：{self.角色获取方式}")
+                # 如果没有指定角色，或者指定的角色索引无效，则按照原逻辑提取
                 if self.角色获取方式 == '随机':
-                    pass
+                    self.提取的角色 = random.choice(list(self.角色.values()))
                 elif self.角色获取方式 == '顺序':
                     self.角色索引 = (self.角色索引 + 1) % len(self.角色)
+                    self.提取的角色 = list(self.角色.values())[self.角色索引]
                 else:
-                     pass
-                self.提取的角色 = random.choice(list(self.角色.values()))
+                    self.提取的角色 = random.choice(list(self.角色.values())) # 默认随机
 
             else:
-                return None
+                return None # 如果角色不是字典，返回None
         else:
-            return None
+            return None # 如果角色不存在，返回None
 
         return self.提取的角色
     def 画风提取(self):
@@ -227,10 +261,11 @@ if __name__ == "__main__":
 
 
     # 创建提示词生成器实例
+    root_dir=r"D:\xm\nai3_auto_generate_image"
     #生成器 = 提示词生成器(角色=角色, 画风=画风, 动作=动作, 角色是否可无=True,角色获取方式='顺序',画风获取方式='顺序',动作获取方式='顺序')
-    生成器= 提示词生成器(角色=角色,动作=动作, 角色是否可无=True,角色获取方式='随机',画风获取方式='随机',动作获取方式='随机')
+    生成器= 提示词生成器(角色=角色,动作=动作, 角色是否可无=True,角色获取方式='随机',画风获取方式='随机',动作获取方式='随机',root_dir=root_dir,是否指定角色=False)
     # 获取提示词组合
-    for _ in range(5):  # 获取5次组合示例
+    for _ in range(10):  # 获取5次组合示例
         print(生成器.提示词组合())
 
 

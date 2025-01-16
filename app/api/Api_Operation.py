@@ -22,12 +22,13 @@ class ApiOperation(NovelAIAPI):
     def __init__(self,**kwargs):
         self.root_dir=kwargs.get("root_dir","../../")
         self.__token=kwargs.get("__token","1211113")
-        self.test=kwargs.get("test",False)
+        self.环境=kwargs.get("环境","测试")
         self.保存路径=kwargs.get("保存路径","./dev_img/")
         self.序号实例=Counter(f"{self.root_dir}/data/序号.json")
         self.批量生成=kwargs.get("批量生成",False)
+        self.debug = kwargs.get("debug", False)
 
-        super().__init__(__token=self.__token,test=self.test)
+        super().__init__(__token=self.__token,环境=self.环境,debug=self.debug)
         self.json_data=json.load(open(f"{self.root_dir}/data/data.json", "r", encoding="utf-8"))
         self.gi_json_data=self.json_data["Generate_Image"]["v3"]
         #self.序号实例=Counter(f"{root_dir}data/序号.json")
@@ -63,7 +64,14 @@ class ApiOperation(NovelAIAPI):
         self.gi_json_data["parameters"]["smea"]=sm
         # return await self.api_generate_image(self.gi_json_data,debug=debug)
         logger.debug(f"json为：{self.gi_json_data}")
-        img_data=await self.api_generate_image(self.gi_json_data ,debug=debug)
+        点数数据=await self.api_dianshu()
+        无限生成状态=点数数据["perks"]["unlimitedImageGeneration"]
+        if not 无限生成状态:
+            logger.warning( f"无限生成状态为：{无限生成状态}")
+            logger.error( f"无限生成状态为：{无限生成状态}")
+            return {"status": "error", "message": "无限生成状态为：False"}
+        logger.info(f"无限生成状态为：{点数数据['perks']['unlimitedImageGeneration']}")
+        img_data=await self.api_generate_image(self.gi_json_data)
         图片序号=self.序号实例.load_counter()
         logger.info(f"图片序号:{图片序号}")
         from datetime import datetime
@@ -75,6 +83,7 @@ class ApiOperation(NovelAIAPI):
         self.序号实例.image_counter=图片序号
         logger.info(f"新图片序号:{图片序号}")
         self.序号实例.save_counter()
+        return {"status": "success", "message": "图片保存成功", "image_path": f"{self.保存路径}/{文件名}"}
 
     async def 批量随机生成图片(self,**接收参数):
         角色=接收参数["角色"]
@@ -90,15 +99,17 @@ class ApiOperation(NovelAIAPI):
         是否指定画风 = 接收参数.get('是否指定画风', False)
         #注固定类参数 值可以为 false和 数字 “数字位你需要固定的提示词在tags的序号，如果画风输入为artist文件则固定的是画师 数字为画师在artist。json的序号
         是否指定角色 = 接收参数.get('是否指定角色', False)
+        #print(f"指定角色为：{是否指定角色}")
+        #print(f"指定角色类型为：{type(是否指定角色)}")
         是否指定动作 = 接收参数.get('是否指定动作', False)
         角色获取方式 = 接收参数.get('角色获取方式', '随机')
         动作获取方式 = 接收参数.get('动作获取方式', '随机')
         画风获取方式 = 接收参数.get('动作获取方式', '随机')#如果输入为 artist文件 则指定无效
         是否随机组合画师=接收参数.get('是否随机组合画师',False)
         if 是否随机组合画师:
-            提示词生成器实例=提示词生成器(角色=角色,质量=质量,动作=动作,角色是否可无=角色是否可无,角色获取方式=角色获取方式,动作获取方式=动作获取方式,画风获取方式=画风获取方式,root_dir=self.root_dir)
+            提示词生成器实例=提示词生成器(角色=角色,质量=质量,动作=动作,角色是否可无=角色是否可无,角色获取方式=角色获取方式,动作获取方式=动作获取方式,画风获取方式=画风获取方式,root_dir=self.root_dir, 是否指定画风=是否指定画风,是否指定角色=是否指定角色,是否指定动作=是否指定动作)
         else:
-            提示词生成器实例=提示词生成器(角色=角色,画风=画风,质量=质量,动作=动作,角色是否可无=角色是否可无,角色获取方式=角色获取方式,动作获取方式=动作获取方式,画风获取方式=画风获取方式,root_dir=self.root_dir)
+            提示词生成器实例=提示词生成器(角色=角色,画风=画风,质量=质量,动作=动作,角色是否可无=角色是否可无,角色获取方式=角色获取方式,动作获取方式=动作获取方式,画风获取方式=画风获取方式,root_dir=self.root_dir, 是否指定画风=是否指定画风,是否指定角色=是否指定角色,是否指定动作=是否指定动作)
         参数生成器实例=参数生成器(尺寸=尺寸,采样=采样,提示词引导系数=cfg,种子=接收种子,smea=smea)
         用户数据=await self.api_get_user_data()
         logger.debug(f"用户数据为：{用户数据}")
@@ -132,7 +143,14 @@ class ApiOperation(NovelAIAPI):
 
             logger.info(f"main-generate_img_提示词为:{prompt}")
             # 调用API生成图像
-            await self.单次生成图片(**传递参数字典)
+            返回=await self.单次生成图片(**传递参数字典)
+            if 返回["status"] == "success":
+                pass
+            else:
+                pass
+                return 返回
+
+
             time.sleep(1)
 
 
@@ -143,7 +161,8 @@ class ApiOperation(NovelAIAPI):
 
 if __name__ == '__main__':
 
-    api=ApiOperation(__token="pst-YUJeMro0TENiUqkk76EcANMQpNKvbXkCiMtXRa8kPdWtNLr8ZSha5oKeY6gUQrCj",test=False,保存路径=r"../../dev_img",批量生成=True,生成次数=10)
+    #api=ApiOperation(__token="pst-YUJeMro0TENiUqkk76EcANMQpNKvbXkCiMtXRa8kPdWtNLr8ZSha5oKeY6gUQrCj",test=False,保存路径=r"../../dev_img",批量生成=True,生成次数=10)
+    api=ApiOperation(__token="123",test=True,保存路径=r"../../dev_img",批量生成=True,生成次数=10)
     logger.info("开始生成图片")
     tags位置 = "../../data/tags.json"
     # 检查文件是否存在

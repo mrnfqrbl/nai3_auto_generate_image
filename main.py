@@ -71,7 +71,8 @@ class main():
 
     def main(self):
         from app import ApiOperation
-        api=ApiOperation(__token=self.token,test=False,保存路径=self.保存位置,批量生成=True,生成次数=self.生成数量,root_dir=self.root_dir)
+        #api=ApiOperation(__token="123",test=True,保存路径="./dev_img",批量生成=True,生成次数=self.生成数量,root_dir=self.root_dir)
+        api=ApiOperation(__token=self.token,环境="代理",保存路径=self.保存位置,批量生成=True,生成次数=self.生成数量,root_dir=self.root_dir)
         tags位置 = f"{self.root_dir}/data/tags.json"
         # 检查文件是否存在
         tags_file_path = tags位置
@@ -114,7 +115,7 @@ class main():
               "画风":画风,
               "质量":质量,
               "动作":动作,
-              "seed":0,"尺寸":"随机","采样":0,"cfg":0,"smea":0,"是否随机组合画师":True}
+              "seed":0,"尺寸":"随机","采样":0,"cfg":0,"smea":0,"是否随机组合画师":True,"是否指定角色": 176}
         asyncio.run(api.批量随机生成图片(**参数))
 
 if __name__ == "__main__":
