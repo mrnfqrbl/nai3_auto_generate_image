@@ -67,3 +67,5 @@ class ConfigManager:
     def get_int(self, section: str, option: str) -> int:
         # 获取整数配置项
         return self.config.getint(section, option)
+    # def load_data(self):
+    #
