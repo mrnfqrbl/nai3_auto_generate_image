@@ -73,7 +73,7 @@ class Counter:
         """
         保存当前日期和序号到文件。
         """
-        logger.info(f"序号;{self.image_counter}")
+        #logger.info(f"序号;{self.image_counter}")
         try:
             with open(self.序号文件位置, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -130,12 +130,15 @@ def save_image(image_data: bytes, save_path: str,  img_name: str=""):
                     with open(image_path, "wb") as f:
                         f.write(img_data)
 
-                logger.info(f"图像已保存至: {image_path}")
+                #logger.info(f"图像已保存至: {image_path}")
+                return {"状态": "成功", "保存路径": image_path}
             else:
-                logger.error("ZIP文件中没有图像。")
+                return {"状态": "失败", "错误信息": "ZIP文件中没有图像。"}
+                #3logger.error("ZIP文件中没有图像。")
     except Exception as e:
+        return {"状态": "失败", "错误信息": f"下载图像时出错: {e}"}
 
-        logger.error(f"下载图像时出错: {e}")
+        #logger.error(f"下载图像时出错: {e}")
 
 
 

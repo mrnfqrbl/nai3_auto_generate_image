@@ -112,7 +112,7 @@ class NovelAIAPI:
         Returns:
             Dict[str, Any]: 包含请求状态、消息、数据和完整响应对象的字典。
         """
-        logger.info(f"debug={debug}")
+        # logger.info(f"debug={debug}")
 
         async with self._lock_api_请求:
             最大重试次数 = 3
@@ -216,8 +216,9 @@ class NovelAIAPI:
                 "请求url": self.api_user_data,
                 "请求头": self.headers,
             }
+
             返回=await self.api_请求(请求信息= 请求信息,debug=True)
-            return  返回.get("响应体", None)
+            return  返回
     async def api_dianshu(self):
         """
         获取用户订阅情况。
