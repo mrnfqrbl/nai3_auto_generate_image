@@ -1,8 +1,4 @@
-aiohttp==3.10.10
-fastapi==0.115.6
+aiohttp==3.10.11
 loguru==0.7.2
-Pillow==11.1.0
 Requests==2.32.3
-scipy==1.15.0
-starlette==0.45.2
 uvicorn==0.34.0

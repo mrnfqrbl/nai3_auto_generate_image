@@ -37,7 +37,6 @@ class 参数生成器:
         self.采样映射 = {
             "e": "k_euler",
             "ea": "k_euler_ancestral",
-            "dpm2msde": "k_dpmpp_2m_sde",
         }
         self.随机采样 = list(self.采样映射.values())
 
@@ -150,4 +149,5 @@ if __name__ == "__main__":
     for i in range(100):
         print(参数生成器实例.获取参数())
         print ("-"*50)
+
 

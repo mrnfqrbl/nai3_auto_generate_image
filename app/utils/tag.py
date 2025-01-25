@@ -1,6 +1,6 @@
 import json
 import random
-
+from loguru import logger
 
 class 提示词生成器:
     def __init__(self, *args, **kwargs):
@@ -96,8 +96,9 @@ class 提示词生成器:
                 self.画风  = self._加载画师数据(f'{self.root_dir}/data/artist.json')
         else:
             self.画风 = self._加载画师数据(f'{self.root_dir}/data/artist.json')
-        self.画风索引 = 0
-        self.动作索引 = 0
+        self.角色索引 = -1
+        self.画风索引 = -1
+        self.动作索引 = -1
 
     def _加载画师数据(self, filename):
         try:
@@ -105,7 +106,7 @@ class 提示词生成器:
                 data = json.load(file)
                 #logger.info(f"加载画师数据成功！")
                 #logger.info(f"画师数据：{data}")
-                # 使用列表推导式提取每个字典的 'value' 值
+                # 使用列表推导式提取每部字典的 'value' 值
                 artist_values = [item['value'] for item in data]
                 #logger.info(f"画师数据列表：{artist_values}")
                 return artist_values
@@ -125,7 +126,7 @@ class 提示词生成器:
         提取画风=self.画风提取()
         提取动作=self.动作提取()
         if self.角色是否可无:
-            if random.random() > 0.35:  # 随机决定是否添加角色
+            if random.random() > 0.3:  # 随机决定是否添加角色
                 返回=f"{提取角色},{提取画风},{提取动作}，{self.质量}"
             else:
                 返回=f"{提取画风},{提取动作}，{self.质量}"
@@ -140,29 +141,20 @@ class 提示词生成器:
                 if isinstance(self.是否指定角色, int):
                     指定角色=str(self.是否指定角色)
 
-
-                    #print(f"tag角色为字典，指定角色为：{指定角色}")
-                    keys = list(self.角色.keys())
-                    #print(f"tag角色为字典，列表：{keys}")
-
                     key = 指定角色
-                    #print(f"tag角色为字典，key：{key}")
                     if key in self.角色: # 检查键是否存在于字典中
                         #print(f"角色为字典，key：{key}")
                         self.提取的角色 = self.角色[key]
                         return self.提取的角色
                     else:
                         pass
-                        #print(f"不对key:{key}")
-
-
-
                 #print(f"tag角色为字典，未指定角色，获取方式为：{self.角色获取方式}")
                 # 如果没有指定角色，或者指定的角色索引无效，则按照原逻辑提取
                 if self.角色获取方式 == '随机':
                     self.提取的角色 = random.choice(list(self.角色.values()))
                 elif self.角色获取方式 == '顺序':
                     self.角色索引 = (self.角色索引 + 1) % len(self.角色)
+                    #logger.info(f"角色索引：{self.角色索引}")
                     self.提取的角色 = list(self.角色.values())[self.角色索引]
                 else:
                     self.提取的角色 = random.choice(list(self.角色.values())) # 默认随机
@@ -186,10 +178,20 @@ class 提示词生成器:
                 #logger.info(f"提取的画风{self.提取的画风}")
                 return self.提取的画风
             elif isinstance(self.画风, dict):
-                if self.画风获取方式 == '随机':
+                if isinstance(self.是否指定画风, int):
+                    指定画风序号=str(self.是否指定画风)
+                    if 指定画风序号 in self.画风:
+                        self.提取的画风 = self.画风[指定画风序号]
+                        return self.提取的画风
+                    else:
+                        pass
+
+                elif self.画风获取方式 == '随机':
                     pass
                 elif self.画风获取方式 == '顺序':
                     self.画风索引 = (self.画风索引 + 1) % len(self.画风)
+                    self.提取的画风 = list(self.画风.values())[self.画风索引]
+                    return self.提取的画风
                 else:
                     pass
                 self.提取的画风 = random.choice(list(self.画风.values()))
@@ -205,11 +207,20 @@ class 提示词生成器:
     def 动作提取(self):
         if self.动作:
             if isinstance(self.动作, dict):
+                if isinstance(self.是否指定动作, int):
+                    指定动作序号=str(self.是否指定动作)
+                    if 指定动作序号 in self.动作:
+                        self.提取的动作 = self.动作[指定动作序号]
+                        return self.提取的动作
+                    else:
+                        pass
 
-                if self.动作获取方式 == '随机':
+                elif self.动作获取方式 == '随机':
                     pass
                 elif self.动作获取方式 == '顺序':
                     self.动作索引 = (self.动作索引 + 1) % len(self.动作)
+                    self.提取的动作 = list(self.动作.values())[self.动作索引]
+                    return self.提取的动作
                 else:
                     pass
                 self.提取的动作 = random.choice(list(self.动作.values()))
@@ -263,7 +274,10 @@ if __name__ == "__main__":
     # 创建提示词生成器实例
     root_dir=r"D:\xm\nai3_auto_generate_image"
     #生成器 = 提示词生成器(角色=角色, 画风=画风, 动作=动作, 角色是否可无=True,角色获取方式='顺序',画风获取方式='顺序',动作获取方式='顺序')
-    生成器= 提示词生成器(角色=角色,动作=动作, 角色是否可无=True,角色获取方式='随机',画风获取方式='随机',动作获取方式='随机',root_dir=root_dir,是否指定角色=False)
+    生成器= 提示词生成器(角色=角色,动作=动作,画风=画风, 角色是否可无=False,
+                         角色获取方式='顺序',画风获取方式='顺序',动作获取方式='顺序',
+                         root_dir=root_dir,是否指定角色=1,是否指定画风=1,
+                         是否指定动作=1)
     # 获取提示词组合
     for _ in range(10):  # 获取5次组合示例
         print(生成器.提示词组合())

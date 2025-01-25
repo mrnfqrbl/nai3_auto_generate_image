@@ -7,7 +7,7 @@ import traceback
 
 from app import logger
 from app.utils.config_manager import ConfigManager
-
+from app.utils.fozu import 佛祖保佑
 
 # 全局异常捕获函数
 def global_exception_handler(exctype, value, tb):
@@ -70,9 +70,10 @@ class main():
 
 
     def main(self):
+        佛祖保佑()
         from app import ApiOperation
         #api=ApiOperation(__token="123",test=True,保存路径="./dev_img",批量生成=True,生成次数=self.生成数量,root_dir=self.root_dir)
-        api=ApiOperation(__token=self.token,环境="代理",保存路径=self.保存位置,批量生成=True,生成次数=self.生成数量,root_dir=self.root_dir)
+        api=ApiOperation(__token=self.token,环境="正式",保存路径=self.保存位置,批量生成=True,生成次数=self.生成数量,root_dir=self.root_dir)
         tags位置 = f"{self.root_dir}/data/tags.json"
         # 检查文件是否存在
         tags_file_path = tags位置
@@ -115,9 +116,22 @@ class main():
               "画风":画风,
               "质量":质量,
               "动作":动作,
-              "seed":0,"尺寸":"随机","采样":0,"cfg":0,"smea":0,"是否随机组合画师":True,"是否指定角色": 176}
-        asyncio.run(api.批量随机生成图片(**参数))
-
+              "seed":0,
+              "尺寸":"随机",
+              "采样":0,
+              "cfg":0,
+              "smea":0,
+              "是否随机组合画师":False,
+              "是否指定画风":8,
+              "是否指定动作": False,
+              "是否指定角色": False,
+              "角色是否可无":True,
+              "角色获取方式":"顺序",
+              "画风获取方式":"顺序",
+              "动作获取方式":"顺序",
+              }
+        asyncio.run(api.无限生成图片(**参数))
+#2345789
 if __name__ == "__main__":
     class_main=main()
     class_main.main()
