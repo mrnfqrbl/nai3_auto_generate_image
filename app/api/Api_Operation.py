@@ -2,9 +2,13 @@ import asyncio
 import json
 import os
 import random
+import re
 import sys
 import time
 import tracemalloc
+from datetime import datetime
+
+from humanfriendly.terminal import output
 
 from app import logger
 from app import 保存序号和图片
@@ -21,20 +25,28 @@ class ApiOperation(NovelAIAPI):
 
         return cls._instance
     def __init__(self,**kwargs):
-        self.root_dir=kwargs.get("root_dir","../../")
+        self.默认root_dir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        self.root_dir=kwargs.get("root_dir",self.默认root_dir)
         self.__token=kwargs.get("__token","1211113")
-        self.环境=kwargs.get("环境","测试")
-        self.保存路径=kwargs.get("保存路径","./dev_img/")
-        self.序号实例=保存序号和图片(f"{self.root_dir}/data/序号.json")
-        self.批量生成=kwargs.get("批量生成",False)
-        self.debug = kwargs.get("debug", False)
+        self.环境=kwargs.get("环境","测试")# 测试，正式，代理
+        self.保存路径=kwargs.get("保存路径",f"{self.root_dir}/dev_img/")
 
-        super().__init__(__token=self.__token,环境=self.环境,debug=self.debug)
+        self.序号实例=保存序号和图片(f"{self.root_dir}/data/序号.json")
+        # self.批量生成=kwargs.get("批量生成",False)
+        # self.debug = kwargs.get("debug", False)
+
+        super().__init__(__token=self.__token,环境=self.环境)
         self.json_data=json.load(open(f"{self.root_dir}/data/data.json", "r", encoding="utf-8"))
-        self.gi_json_data=self.json_data["Generate_Image"]["v3"]
+        self.gi_json_data=self.json_data.get("Generate_Image",{}).get("v3",{})
+        self.放大_json=self.json_data.get("upscale",{})
+        if not self.gi_json_data:
+            logger.error("data.json中Generate_Image.v3为空")
+            sys.exit()
+        if not self.放大_json:
+            logger.error("data.json中upscale为空")
+            sys.exit()
         #self.序号实例=Counter(f"{root_dir}data/序号.json")
-        if self.批量生成:
-            self.批量生成次数=kwargs.get("生成次数",1)
+
 
 
 
@@ -82,12 +94,13 @@ class ApiOperation(NovelAIAPI):
             logger.error(f"生成图片时出错: {e}")
             return {"status": "error", "message": f"生成图片时出错: {e}", "序号": 图片序号}
 
-        from datetime import datetime
-        标准可读_日期= datetime.now().strftime('%H-%M-%S')
+
+        标准可读_时间= datetime.now().strftime('%H-%M-%S')
         年月日_日期 = datetime.now().strftime('%Y年%m月%d日')
-        文件名 = f"{图片序号:03d}--{年月日_日期}--{标准可读_日期}--{种子}.png"
+        文件名 = f"{图片序号:03d}--{年月日_日期}--{标准可读_时间}--{种子}.png"
         try:
-            返回=self.序号实例.save_image(img_data, self.保存路径, 文件名)
+            保存路径=os.path.join(self.保存路径,年月日_日期)
+            返回=self.序号实例.save_image(img_data,保存路径, 文件名)
         except Exception as e:
             logger.error(f"保存图片时出错: {e}")
             return {"status": "error", "message": f"保存图片时出错: {e}", "序号": 图片序号}
@@ -163,9 +176,11 @@ class ApiOperation(NovelAIAPI):
             # 调用API生成图像
             返回=await self.单次生成图片(**传递参数字典)
             if 返回["status"] == "success":
+                logger.info(返回)
                 pass
             else:
                 pass
+                logger.error(返回)
                 return 返回
 
 
@@ -246,95 +261,259 @@ class ApiOperation(NovelAIAPI):
                 logger.error(返回)
                 return 返回
 
-            delay_seconds = random.randint(5, 50)  # 生成 1 到 60 之间的随机整数
+            delay_seconds = random.randint(5, 40)  # 生成 1 到 60 之间的随机整数
             logger.info(f"等待{delay_seconds}秒进行下一次生成")
             time.sleep(delay_seconds)
 
 
+    ###其他操作区
+    async def 单次放大图片(self,**接收参数):
+        放大倍数=接收参数.get("放大倍数",4)
+        宽度=接收参数.get("宽度",832)
+        高度=接收参数.get("高度",1216)
+        图片base64数据=接收参数.get("图片base64数据","")
+        文件名=接收参数.get("文件名","")
+        保存路径=接收参数.get("保存路径","")
+        try:
+            返回数据=await self.api_图片放大({
+            "image":图片base64数据,
+            "width":宽度,
+            "height":高度,
+            "scale":放大倍数
+        })
+        except Exception as e:
+            logger.error(f"放大图片失败，错误信息为：{e}")
+            return {"status":"error","message":f"放大图片失败，错误信息为：{e}"}
+
+        try:
+            返回=self.序号实例.save_image(返回数据,保存路径,文件名)
+            #logger.info(返回)
+            return 返回
+        except Exception as e:
+            logger.error(f"保存图片失败，错误信息为：{e}")
+            return {"状态":"错误","message":f"保存图片失败，错误信息为：{e}"}
+    async def 批量放大图片(self, **接收参数):
+        """
+        批量放大图片，并为每个日期目录添加统计信息。
+
+        Args:
+            接收参数: 包含以下键的字典：
+                放大倍数 (int, optional): 放大倍数，默认为 4。
+                图片所在目录 (str, optional): 图片所在的根目录，默认为空字符串。
+                保存路径 (str, optional): 放大后图片保存的根目录，默认为空字符串。
+                成功后是否删除原图 (bool, optional): 是否在成功放大后删除原图，默认为 False。
+
+        Returns:
+            dict: 包含操作状态和消息的字典。
+        """
+        #函数内导入
+        import base64
+        import re
+        import os
+        import json
+        from PIL import Image
+        #参数
+        点数数据=await self.api_dianshu()
+        # logger.info(f"点数数据为：{点数数据}")
+        点数=点数数据.get("trainingStepsLeft",{}).get("fixedTrainingStepsLeft",0)+点数数据.get("trainingStepsLeft",{}).get("purchasedTrainingSteps",0)
+        logger.info(f"初始点数为：{点数}")
+        if 点数 < 7:
+            logger.error("点数不足，无法进行批量放大操作。")
+            return {"状态": "错误", "message": "点数不足，无法进行批量放大操作。"}
+
+        放大倍数 = 接收参数.get("放大倍数", 4)
+        图片所在目录 = 接收参数.get("图片所在目录", "")
+        初始保存路径 = 接收参数.get("保存路径", "")
+        成功后是否删除原图 = 接收参数.get("成功后是否删除原图", False)
+
+        logger.info(f"开始批量放大图片，图片所在目录：{图片所在目录}，保存路径：{初始保存路径}，放大倍数：{放大倍数}，成功后是否删除原图：{成功后是否删除原图}")
+
+        if not 图片所在目录:
+            logger.error("图片所在目录为空，无法进行批量放大操作。")
+            return {"状态": "错误", "message": "图片所在目录为空，无法进行批量放大操作。"}
+
+        try:
+            all_stats = {}  # 用于存储所有日期目录的统计信息
+            for root, dirs, files in os.walk(图片所在目录):
+                当前目录名称 = os.path.basename(root)
+                date_match = re.search(r'\d{4}-+\d{1,2}-+\d{1,2}', 当前目录名称)
+
+                if date_match:
+                    logger.info(f"正在处理日期目录：{当前目录名称}")
+                    date_str = date_match.group(0)
+                    stats = {"成功数量": 0, "错误数量": 0}  # 初始化当前日期目录的统计信息
+                    all_stats[date_str] = stats  # 将当前日期目录的统计信息添加到总统计信息中
+                    del_info = {}  # 用于存储当前目录删除图片的信息，格式为 {父目录名称: {文件名1, 文件名2, ...}}
+                    for file in files:
+                        if file.lower().endswith(('.png', '.jpg', '.jpeg')):
+
+                            file_path = os.path.join(root, file)
+                            logger.debug(f"正在处理文件：{file_path}")
+
+                            try:
+                                with Image.open(file_path) as img: # 使用 with 语句打开图片，确保资源释放
+                                    图片宽度 = img.width
+                                    图片高度 = img.height
+                                    with open(file_path, "rb") as image_file:
+                                        图片的父目录名称 = os.path.basename(os.path.dirname(file_path))
+                                        最终保存路径 = os.path.join(初始保存路径, 图片的父目录名称)
+                                        图片文件名 = os.path.basename(file)
+                                        图片字节数据 = image_file.read()
+                                        图片base64数据 = base64.b64encode(图片字节数据).decode('utf-8')
+                                del_json_path = os.path.join(初始保存路径, "del.json")
+                                if os.path.exists(del_json_path):
+                                    with open(del_json_path, "r", encoding="utf-8") as f:
+
+                                        try:
+                                            del_data = json.load(f)
+                                        except json.JSONDecodeError:
+                                            del_data = {}  # 如果文件为空或不是有效的 JSON，则初始化为空字典
+                                else:
+                                    del_data = {}
+                                logger.info(f"图片的父目录名称:{图片的父目录名称},图片文件名:{图片文件名}")
+                                if 图片的父目录名称 in del_data and 图片文件名 in del_data[图片的父目录名称]:
+                                    图片测试保持路径= os.path.join(初始保存路径, 图片的父目录名称, 图片文件名)
+                                    logger.info(f"图片测试保持路径:{图片测试保持路径}")
+                                    if os .path.exists(图片测试保持路径) and os.path.getsize(图片测试保持路径) > 1024*100 :
+                                        logger.info(f"图片 {图片文件名} 已存在，跳过放大操作。")
+                                        continue
+                                输入参数 = {
+                                    "放大倍数": 放大倍数,
+                                    "宽度": 图片宽度,
+                                    "高度": 图片高度,
+                                    "图片base64数据": 图片base64数据,
+                                    "文件名": 图片文件名,
+                                    "保存路径": 最终保存路径,
+                                }
+                                # logger.info(f"输入参数为：{输入参数}")
+
+                                返回 = await self.单次放大图片(**输入参数)  # 注释掉，因为你没有提供单次放大图片的实现
+                                点数数据=await self.api_dianshu()
+                                # logger.info(f"点数数据为：{点数数据}")
+                                点数=点数数据.get("trainingStepsLeft",{}).get("fixedTrainingStepsLeft",0)+点数数据.get("trainingStepsLeft",{}).get("purchasedTrainingSteps",0)
+
+                                logger.info(f"当前图片放大后的剩余点数：{点数}")
+                                logger.info(f"返回数据为：{返回}")
+
+                                if 返回["状态"] == "成功" and 返回.get("保存路径", ""):
+                                    保存的图片 = 返回.get("保存路径", "")
+                                    if os.path.exists(保存的图片):
+                                        if 成功后是否删除原图:
+                                            try:
+
+                                                os.remove(file_path)  # 实际删除操作，这里注释掉方便测试
+                                                logger.info(f"删除原图片成功，文件路径为：{file_path}")
+
+
+                                                try:
+
+
+
+
+                                                    if 图片的父目录名称 in del_data:
+                                                        if 图片文件名 not in del_data[图片的父目录名称]:
+                                                            del_data[图片的父目录名称].append(图片文件名)
+
+                                                    else:
+                                                        del_data[图片的父目录名称] = [图片文件名]
+                                                    # logger.info(f"删除文件信息：{del_data}")
+                                                    with open(del_json_path, "w", encoding="utf-8") as f:
+                                                        json.dump(del_data, f, ensure_ascii=False, indent=4)
+
+                                                        # os.makedirs(os.path.dirname(del_json_path), exist_ok=True)
+                                                        # del_data = {图片的父目录名称: [图片文件名]}
+                                                        # with open(del_json_path, "w", encoding="utf-8") as f:
+                                                        #     json.dump(del_data, f, ensure_ascii=False, indent=4)
+                                                    logger.info(f"删除信息已写入：{del_json_path}")
+                                                except Exception as e:
+                                                    logger.error(f"写入 del.json 失败：{del_json_path}，错误信息：{e}")
+                                            except  Exception as e:
+                                                logger.error(f"删除图片失败：{file_path}，错误信息：{e}")
+
+                                # logger.info(f"图片的父目录为：{图片的父目录名称}，图片文件名为：{图片文件名}，图片宽度为：{图片宽度}，图片高度为：{图片高度}")
+                                stats["成功数量"] += 1  # 成功处理一张图片，计数加一
+                                # input("已暂停输入任意继续")
+                            except FileNotFoundError:
+                                logger.error(f"文件未找到：{file_path}")
+                                stats["错误数量"] += 1
+                            except Exception as e:
+                                logger.error(f"放大图片失败，文件：{file_path}，错误信息：{e}")
+                                stats["错误数量"] += 1  # 处理图片失败，错误计数加一
+
+
+            logger.info(f"批量放大图片完成，统计信息：{all_stats}")
+            logger.info(f"批量放大图片完成，总数目录为 {len(all_stats)}，总成功数量为 {sum(stats['成功数量'] for stats in all_stats.values())}，总错误数量为 {sum(stats['错误数量'] for stats in all_stats.values())}")
+
+            return {"状态": "成功", "message": "批量放大图片完成", "statistics": all_stats}
+
+        except Exception as e:
+            logger.error(f"批量放大图片失败，错误信息：{e}")
+            return {"状态": "错误", "message": f"批量放大图片失败，错误信息：{e}"}
 
 
 
 
 
+#放大测试
 
 
 if __name__ == '__main__':
+       输入路径=r"D:\xm\nai3_auto_generate_image\input\dev_img"
+       放大倍数=4
+       保存路径=r"D:\xm\nai3_auto_generate_image\output\dev_放大2"
+       api=ApiOperation(__token="123",环境="测试",保存路径=r"../../dev_img",批量生成=True,生成次数=10)
+       # api=ApiOperation(__token="pst-YUJeMro0TENiUqkk76EcANMQpNKvbXkCiMtXRa8kPdWtNLr8ZSha5oKeY6gUQrCj",环境="正式",保存路径=r"../../dev_img",生成次数=10)
+       asyncio.run(api.批量放大图片(**{"放大倍数":放大倍数,"图片所在目录":输入路径,"保存路径":保存路径,"成功后是否删除原图":True}))
 
-    #api=ApiOperation(__token="pst-YUJeMro0TENiUqkk76EcANMQpNKvbXkCiMtXRa8kPdWtNLr8ZSha5oKeY6gUQrCj",test=False,保存路径=r"../../dev_img",批量生成=True,生成次数=10)
-    api=ApiOperation(__token="1123",环境="测试",保存路径=r"../../dev_img",批量生成=True,生成次数=10)
-    logger.info("开始生成图片")
-    tags位置 = "../../data/tags.json"
-    # 检查文件是否存在
-    tags_file_path = tags位置
-    default_tags = {
-        "__注释": "角色：为你喜欢的角色格式如下，画风：为艺术家组合同下，动作：为除开角色画风的其余部分包括服装动作等以及需要叠加覆盖的人物特征，质量：指定生成图片质量的一般不需要改",
-        "角色": {
-            "1": "{yaoyao (genshin impact)}",
-            "2": "bailu (honkai: star rail)"
-        },
-        "画风": {
-            "1": "[artist:sho_(sho_lwlw)], artist:wlop, [artist:aki99]",
-            "2": "[artist:sho_(sho_lwlw)], artist:wlop, [artist:aki99]"
-        },
-        "动作": {
-            "1": "1girl,solo,long hair,cat ear fluff,cat ears,lightblue hair,green eyes,{loli},ahoge,looking at viewer,standing on one leg,blush,standing,parted lips,leg up, cowboy shot, {{close-up}}, ,no_panties,tuncensored,pussy ,{Sneakers},{{Pussy object  insertion}},{sex},{anus},{Very thick carrot},{Orgasm}, {shivering},{bedroom},Full body portrait",
-            "2": "1girl,loli,ass focus,(see-through,white pantyhose),side lying,looking at viewer,from below,{{Cat ears}},{sex},{nsfw},{no panties},Pussy, anus,{ Thick Tentacles}, {{Anal insertion}},{No tail},{{Tentacle anal insertion}},clothes_pull,"
-        },
-        "质量": "best quality, amazing quality, very aesthetic, absurdres"
-    }
-    if not os.path.exists(tags_file_path):
-        # 如果文件不存在，创建文件并写入默认数据
-        os.makedirs(os.path.dirname(tags_file_path), exist_ok=True)  # 确保目录存在
-        with open(tags_file_path, "w", encoding="utf-8") as file:
-            json.dump(default_tags, file, ensure_ascii=False, indent=4)
-        logger.warning(f"文件 {tags_file_path} 不存在，已创建并写入默认数据。")
-    # 读取文件内容
-    with open(tags_file_path, "r", encoding="utf-8") as file:
-        tags = json.load(file)
-        if json.dumps(tags, ensure_ascii=False, indent=4).strip() == json.dumps(default_tags, ensure_ascii=False,
-                                                                                indent=4).strip():
-            logger.warning("检测到默认数据，请修改tags.json文件后启动，延时5秒关闭")
-            time.sleep(5)
-            sys.exit()
 
-    角色= tags['角色']
-    画风= tags['画风']
-    动作= tags['动作']
-    质量 =tags['质量']
-    参数={"角色":角色,
-           "画风":画风,
-           "质量":质量,
-           "动作":动作,
-        "seed":0,"尺寸":"随机","采样":0,"cfg":0,"smea":0,"是否随机组合画师":True}
-    asyncio.run(api.无限生成图片(**参数))
 
-# "角色":{
-#     "1":"星野",
-#     "2":"七七",
-#     "3":"小泽",
-#     "4":"叶晨",
-#     "5":"苏玄",
-#     "6":"叶天命",
-#     "7":"洪武大帝",
-#     "8":"皇太极"
-# },
-# "画风": {
-#     "1":"写实",
-#     "2":"动漫",
-#     "3":"可爱",
-#     "4":"复古",
-#     "5":"抽象",
-# },
-# "质量":"非常好","动作": {
-#     "1":"站立"
-#     , "2":"行走"
-#     , "3":"跳跃"
-#     , "4":"坐下"
-#     , "5":"起飞"
-# },
-# userdata=asyncio.run(api.api_get_user_data())
-    #
-    # logger.info(userdata)
+# if __name__ == '__main__':
+#
+#     #api=ApiOperation(__token="pst-YUJeMro0TENiUqkk76EcANMQpNKvbXkCiMtXRa8kPdWtNLr8ZSha5oKeY6gUQrCj",test=False,保存路径=r"../../dev_img",批量生成=True,生成次数=10)
+#     api=ApiOperation(__token="1123",环境="测试",保存路径=r"../../dev_img",批量生成=True,生成次数=10)
+#     logger.info("开始生成图片")
+#     tags位置 = "../../data/tags.json"
+#     # 检查文件是否存在
+#     tags_file_path = tags位置
+#     default_tags = {
+#         "__注释": "角色：为你喜欢的角色格式如下，画风：为艺术家组合同下，动作：为除开角色画风的其余部分包括服装动作等以及需要叠加覆盖的人物特征，质量：指定生成图片质量的一般不需要改",
+#         "角色": {
+#             "1": "{yaoyao (genshin impact)}",
+#             "2": "bailu (honkai: star rail)"
+#         },
+#         "画风": {
+#             "1": "[artist:sho_(sho_lwlw)], artist:wlop, [artist:aki99]",
+#             "2": "[artist:sho_(sho_lwlw)], artist:wlop, [artist:aki99]"
+#         },
+#         "动作": {
+#             "1": "1girl,solo,long hair,cat ear fluff,cat ears,lightblue hair,green eyes,{loli},ahoge,looking at viewer,standing on one leg,blush,standing,parted lips,leg up, cowboy shot, {{close-up}}, ,no_panties,tuncensored,pussy ,{Sneakers},{{Pussy object  insertion}},{sex},{anus},{Very thick carrot},{Orgasm}, {shivering},{bedroom},Full body portrait",
+#             "2": "1girl,loli,ass focus,(see-through,white pantyhose),side lying,looking at viewer,from below,{{Cat ears}},{sex},{nsfw},{no panties},Pussy, anus,{ Thick Tentacles}, {{Anal insertion}},{No tail},{{Tentacle anal insertion}},clothes_pull,"
+#         },
+#         "质量": "best quality, amazing quality, very aesthetic, absurdres"
+#     }
+#     if not os.path.exists(tags_file_path):
+#         # 如果文件不存在，创建文件并写入默认数据
+#         os.makedirs(os.path.dirname(tags_file_path), exist_ok=True)  # 确保目录存在
+#         with open(tags_file_path, "w", encoding="utf-8") as file:
+#             json.dump(default_tags, file, ensure_ascii=False, indent=4)
+#         logger.warning(f"文件 {tags_file_path} 不存在，已创建并写入默认数据。")
+#     # 读取文件内容
+#     with open(tags_file_path, "r", encoding="utf-8") as file:
+#         tags = json.load(file)
+#         if json.dumps(tags, ensure_ascii=False, indent=4).strip() == json.dumps(default_tags, ensure_ascii=False,
+#                                                                                 indent=4).strip():
+#             logger.warning("检测到默认数据，请修改tags.json文件后启动，延时5秒关闭")
+#             time.sleep(5)
+#             sys.exit()
+#
+#     角色= tags['角色']
+#     画风= tags['画风']
+#     动作= tags['动作']
+#     质量 =tags['质量']
+#     参数={"角色":角色,
+#            "画风":画风,
+#            "质量":质量,
+#            "动作":动作,
+#         "seed":0,"尺寸":"随机","采样":0,"cfg":0,"smea":0,"是否随机组合画师":True}
+#     asyncio.run(api.无限生成图片(**参数))
 
-    # dianshu=asyncio.run(api.api_dianshu())
-    # logger.info(dianshu)

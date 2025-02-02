@@ -120,8 +120,8 @@ class 保存序号和图片:
 
                         # 生成文件名，附加种子
 
-                        from datetime import datetime
-                        image_path = os.path.join(save_path , self.f_current_date, img_name)
+
+                        image_path = os.path.join(save_path , img_name)
 
                         # 确保保存图像的目录存在
                         os.makedirs(os.path.dirname(image_path), exist_ok=True)

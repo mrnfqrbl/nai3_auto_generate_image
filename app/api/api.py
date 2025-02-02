@@ -44,8 +44,8 @@ class NovelAIAPI:
         self.logger = logger
         self.__token = kwargs.get("__token", "1211113")
         self.环境 = kwargs.get("环境", "正式")
-        self.debug = kwargs.get("debug", False)
-        if self.debug:
+
+        if self.环境 == "测试":
             logger.level("DEBUG")
 
         logger.debug(f"令牌：{self.__token}, 环境：{self.环境}")
@@ -143,8 +143,9 @@ class NovelAIAPI:
                                 json=请求json,
                                 params=请求查询信息,
                         ) as response:
-                            if debug:
-                                self.logger.debug(f"响应状态码: {response.status}")
+                            if self.环境 == "测试":
+                                logger.debug(f"请求信息: {请求信息}")
+                            self.logger.debug(f"响应状态码: {response.status}")
                             response.raise_for_status()  # 如果状态码不是 2xx，则抛出异常
 
                             # 读取响应体，并根据 Content-Type 选择合适的处理方式
@@ -232,7 +233,7 @@ class NovelAIAPI:
             }
             返回=await self.api_请求(请求信息= 请求信息, debug=True)
             return 返回.get("响应体",None)
-    async def api_img_enlarge(self, json_payload: dict):
+    async def api_图片放大(self, json_payload: dict):
         """
         图片放大功能
         :param json_payload: 请求的参数字典，包含图像数据和放大比例等信息
