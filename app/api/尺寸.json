@@ -1,0 +1,18 @@
+{
+"小": {
+"small": [
+{"width": 832, "height": 1216},
+{"width": 1216, "height": 832},
+{"width": 1024, "height": 1024}
+],
+"壁纸": [
+{"width": 1088, "height": 1920},
+{"width": 1920, "height": 1088}
+],
+"大": [
+{"width": 1472, "height": 1472},
+{"width": 1024, "height": 1536},
+{"width": 1536, "height": 1024}
+]
+}
+}

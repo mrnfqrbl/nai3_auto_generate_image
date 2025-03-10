@@ -8,7 +8,6 @@ import time
 import tracemalloc
 from datetime import datetime
 
-from humanfriendly.terminal import output
 
 from app import logger
 from app import 保存序号和图片
@@ -336,7 +335,8 @@ class ApiOperation(NovelAIAPI):
             all_stats = {}  # 用于存储所有日期目录的统计信息
             for root, dirs, files in os.walk(图片所在目录):
                 当前目录名称 = os.path.basename(root)
-                date_match = re.search(r'\d{4}-+\d{1,2}-+\d{1,2}', 当前目录名称)
+                # date_match = re.search(r'\d{4}-+\d{1,2}-+\d{1,2}', 当前目录名称)
+                date_match = re.search(r'(\d{4}年\d{1,2}月\d{1,2}日)|(\d{4}-+\d{1,2}-+\d{1,2})', 当前目录名称)
 
                 if date_match:
                     logger.info(f"正在处理日期目录：{当前目录名称}")
@@ -377,6 +377,7 @@ class ApiOperation(NovelAIAPI):
                                     if os .path.exists(图片测试保持路径) and os.path.getsize(图片测试保持路径) > 1024*100 :
                                         logger.info(f"图片 {图片文件名} 已存在，跳过放大操作。")
                                         continue
+
                                 输入参数 = {
                                     "放大倍数": 放大倍数,
                                     "宽度": 图片宽度,
@@ -386,7 +387,7 @@ class ApiOperation(NovelAIAPI):
                                     "保存路径": 最终保存路径,
                                 }
                                 # logger.info(f"输入参数为：{输入参数}")
-
+                                logger.info(f"单次输入参数(尺寸：{图片宽度}x{图片高度}，文件名：{图片文件名}，保存路径：{最终保存路径}，倍数：{放大倍数})")
                                 返回 = await self.单次放大图片(**输入参数)  # 注释掉，因为你没有提供单次放大图片的实现
                                 点数数据=await self.api_dianshu()
                                 # logger.info(f"点数数据为：{点数数据}")
@@ -458,13 +459,36 @@ class ApiOperation(NovelAIAPI):
 
 
 if __name__ == '__main__':
-       输入路径=r"D:\xm\nai3_auto_generate_image\input\dev_img"
-       放大倍数=4
-       保存路径=r"D:\xm\nai3_auto_generate_image\output\dev_放大2"
-       api=ApiOperation(__token="123",环境="测试",保存路径=r"../../dev_img",批量生成=True,生成次数=10)
-       # api=ApiOperation(__token="pst-YUJeMro0TENiUqkk76EcANMQpNKvbXkCiMtXRa8kPdWtNLr8ZSha5oKeY6gUQrCj",环境="正式",保存路径=r"../../dev_img",生成次数=10)
-       asyncio.run(api.批量放大图片(**{"放大倍数":放大倍数,"图片所在目录":输入路径,"保存路径":保存路径,"成功后是否删除原图":True}))
+       # 输入路径=r"D:\xm\nai3_auto_generate_image\input\dev_img"
+       # 放大倍数=4
+       # 保存路径=r"D:\xm\nai3_auto_generate_image\output\dev_放大2"
+       # api=ApiOperation(__token="123",环境="测试",保存路径=r"../../dev_img",批量生成=True,生成次数=10)
+       # # api=ApiOperation(__token="pst-YUJeMro0TENiUqkk76EcANMQpNKvbXkCiMtXRa8kPdWtNLr8ZSha5oKeY6gUQrCj",环境="正式",保存路径=r"../../dev_img",生成次数=10)
+       # asyncio.run(api.批量放大图片(**{"放大倍数":放大倍数,"图片所在目录":输入路径,"保存路径":保存路径,"成功后是否删除原图":True}))
+       import json
+       from PIL import Image
+       import base64
+       图片=r"D:\ComfyUI_00001_.png"
+       api=ApiOperation(__token="pst-YUJeMro0TENiUqkk76EcANMQpNKvbXkCiMtXRa8kPdWtNLr8ZSha5oKeY6gUQrCj",环境="正式")
+       with Image.open(图片) as img:
+           with open(图片, "rb") as image_file:
+               最终保存路径 = os.path.join("./dev")
+               图片文件名 = os.path.basename(图片)
+               图片字节数据 =image_file.read()
+               图片base64数据 = base64.b64encode(图片字节数据).decode('utf-8')
+           图片宽度=img.width
+           图片高度=img.height
 
+           参数={
+               "放大倍数": 4,
+               "宽度": 图片宽度,
+               "高度": 图片高度,
+               "图片base64数据": 图片base64数据,
+               "文件名": 图片文件名,
+               "保存路径": 最终保存路径,
+           }
+           print(f"图片尺寸：{图片宽度}x{图片高度}")
+       asyncio.run(api.单次放大图片(**参数))
 
 
 # if __name__ == '__main__':

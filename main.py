@@ -68,6 +68,58 @@ class main():
         logger.info(f"总数量: {self.生成数量}")
 
 
+    def tag(self):
+        佛祖保佑()
+        tags位置 = f"{self.root_dir}/data/tags.json"
+        tags_file_path = tags位置
+        try:
+            with open(tags_file_path, "r", encoding="utf-8") as file:
+                tags = json.load(file)
+                self.角色 = tags['角色']
+                self.画风 = tags['画风']
+                self.动作 = tags['动作']
+                self.质量 = tags['质量']
+                logger.info("Tags loaded successfully.")
+        except FileNotFoundError:
+            logger.error(f"Error: tags.json file not found at {tags_file_path}")
+            sys.exit(1)
+        except json.JSONDecodeError:
+            logger.error(f"Error: Invalid JSON in tags.json file.")
+            sys.exit(1)
+        except KeyError as e:
+            logger.error(f"Error: Missing key in tags.json: {e}")
+            sys.exit(1)
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            sys.exit(1)
+
+    def 无限生成提示词(self):
+        """
+        无限生成提示词，每 3 秒输出一个到控制台。
+        """
+        if not all([self.角色, self.画风, self.动作, self.质量]):
+            logger.error("请先运行 tag() 方法加载 tags.json 数据。")
+            return
+        from app.utils.tag import 提示词生成器
+        提示词生成器实例 = 提示词生成器(
+            角色=self.角色,
+            画风=self.画风,
+            质量=self.质量,
+            动作=self.动作,
+        )
+
+        try:
+            while True:
+                prompt = 提示词生成器实例.提示词组合(sd=True)
+                logger.info(f"生成的提示词: {prompt}")
+                time.sleep(5)  # 暂停 3 秒
+        except asyncio.CancelledError:
+            logger.info("无限生成任务已取消。")
+
+
+
+
+
 
     def main(self):
         佛祖保佑()
@@ -134,4 +186,5 @@ class main():
 #2345789
 if __name__ == "__main__":
     class_main=main()
-    class_main.main()
+    class_main.tag()
+    class_main.无限生成提示词()

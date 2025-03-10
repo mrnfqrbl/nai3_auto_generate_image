@@ -1,0 +1,1 @@
+Start-Process python -ArgumentList "main.py"
