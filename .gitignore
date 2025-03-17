@@ -15,3 +15,4 @@ tags*.json
 /data/comfyui*.json
 /data/序号.json
 /dsata/temp
+__pycache__
