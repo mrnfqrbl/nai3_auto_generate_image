@@ -320,7 +320,7 @@ def 多实例多URL批量生成(参数: Dict[str, Any]):
             实例字典[apiname].批量生成(url, 批量生成次数, 输入)
         except Exception as e:
             logger.error(f"线程 {threading.current_thread().name} 发生错误: {e}")
-
+    线程列表 = []
     for index, i in enumerate(实例输入):
         数量 = i["数量"]
         if 数量 <= 0:
@@ -332,7 +332,7 @@ def 多实例多URL批量生成(参数: Dict[str, Any]):
 
         工作流模板 = i["工作流模板"]
         保存目录 = i.get("保存目录")
-        线程列表 = []
+
         t = threading.Thread(
             target=线程函数,
             args=(url, 批量生成次数, 输入, 工作流模板, index,保存目录),  # 传递工作流模板和索引
@@ -428,7 +428,7 @@ if __name__ == '__main__':
     # a=查询JSON数据(请求体副本, ["extra_data", "extra_pnginfo", "workflow", "nodes", {"id": id}, "widgets_values", 0])
     # print(a)
 
-    api = ComfyUI_API(提示词生成器实例, "mrnf-api", 根目录="../../")  # 修改变量名
+    # api = ComfyUI_API(提示词生成器实例, "mrnf-api", 根目录="../../")  # 修改变量名
     # 请求体副本=api.请求体
 
     # 新请求体副本=api.更新字典信息(["extra_data", "extra_pnginfo", "workflow", "nodes", {"id":4}, "widgets_values", 0],
