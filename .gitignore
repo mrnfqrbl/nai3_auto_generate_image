@@ -11,3 +11,7 @@ test_api_server
 /杂物
 tags*.json
 /.idea
+
+/data/comfyui*.json
+/data/序号.json
+/dsata/temp
