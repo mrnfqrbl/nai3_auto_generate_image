@@ -1,11 +1,11 @@
 {
-  "client_id": "8d191a172a93453aa4d647ab4ea85133",
+  "client_id": "9c575d58f4f241f586e1cdc8565dd42e",
   "prompt": {
     "4": {
       "inputs": {
-        "text": "(artist:tsubasa tsubasa:0.60),\nbest quality, amazing quality, very aesthetic, absurdres,\n\nCharacter 1\n(\nloli, petite, \nblue long hair, almond eyes, upturned eyes, bangs, \nlight blue short transparent Hanfu, white lining, bamboo leaf embroidery, \npink leather belt, wooden amulet (bamboo leaf pattern), bamboo bracelet (left wrist), \ngreen and white sneakers, delicate face, tiny hands, \nskin texture visible through hanfu, hair luster, \nviolet eyes, mole under left eye, jade pendant, bandaid (knee or elbow), \nhighly detailed face, highly detailed eyes, youthful appearance, \nDull skin, delicate skin, \nsneaker details: textured rubber sole, breathable mesh upper, visible stitching, subtle logo, \nholding spoon, plate, sitting, open mouth, +_+, \nsparkling eyes, hair luster, \nholding, rice, \nsmile, spoon, food, curry rice, \nshoes removed, \ntwo side up, \n)\n\nCharacter 2\n(\nfemale child, \nblack footwear, \nmedium hair, \ngreen jacket, \nholding phone, smartphone, \ndrinking straw, \nsweat, star-shaped pupils, \nprint shirt, \n)\n\nEnvironment\n(\nindoor, wooden floor, wooden table, \nchair, table, cup, drinking glass, \nsteam, bowl, soup, \nice cube, \ncouch, \nglass, star (symbol), \nfork, wooden table, pasta, \nrestaurant, \n)\n\nDetails\n(\nrealism, rich details, cinematic lighting, \nskin texture, visible stitching, \ntoes, barefoot, \npov, \nsymbol-shaped pupils, \nout of frame, foot focus, \nblush, eating, \nhand on own face, looking at viewer, \nfrom above, \nlong hair, \n)",
+        "text": "laffey ii \\\\(azur lane\\\\),long_hair,white hair,red eyes,blue hairband,blue ribbon,,(tsubasa tsubasa:0.7),(toddler:1.5),loli,1girl,bandages,pussy,,(on back:1.3),(lying:1.4),(loli:1.3),(hetero:1.5),torn clothes,(1boy:1.2),outdoors,long hair,(looking at viewer:1.3),(grass:1.3),(black eyes:1.4),bandaged arm,weapon,(pov:1.4),knife inserted into vagina,bangs,(imminent rape:1.2),(spread legs:1.3),teeth,bottomless,long sleeves,(sword:1.5),(grey eyes:1.5),(arm up:1.4),(shoes:1.1),(tears:1.5),(japanese clothes:1.2),(bandaged head:1.2),leg up,dirty clothes,knee up,no panties,blush,(dirty:1.1),thigh grab,(on ground:1.4),(injury:1.4),thighs,(clenched teeth:1.4),(amputee:1.5),(parted lips:1.2),(night:1.2),rape,hair between eyes,(leg grab:1.3),blood,flat chest,blood on clothes,(mole under eye:1.1),skirt,(bandaged leg:1.3),kimono,side ponytail,disembodied limb,hand on another's face,mole,crying,(pov hands:1.1),chinese clothes,leg lift,(torn skirt:1.5),，best quality, amazing quality, very aesthetic, absurdres",
         "clip": [
-          "17",
+          "102",
           1
         ]
       },
@@ -18,7 +18,7 @@
       "inputs": {
         "text": "worst quality, low quality, normal quality, low contrast, blurry, pixelated, overcompressed,underwear,Wrong number of fingers, stuck fingers, twisted limbs, wrong limbs, wrong eyes, asymmetrical eyes,Skin reflection, skin radiance,logo,text,\n",
         "clip": [
-          "17",
+          "102",
           1
         ]
       },
@@ -99,14 +99,14 @@
     },
     "53": {
       "inputs": {
-        "seed": 1085188903501419,
+        "seed": 1053623968242719,
         "steps": 35,
-        "cfg": 6,
+        "cfg": 7,
         "sampler_name": "euler",
         "scheduler": "normal",
         "denoise": 1,
         "model": [
-          "17",
+          "102",
           0
         ],
         "positive": [
@@ -281,9 +281,9 @@
     },
     "98": {
       "inputs": {
-        "text": "(artist:tsubasa tsubasa:0.60),\nbest quality, amazing quality, very aesthetic, absurdres,\n\nCharacter 1\n(\nloli, petite, \nblue long hair, almond eyes, upturned eyes, bangs, \nlight blue short transparent Hanfu, white lining, bamboo leaf embroidery, \npink leather belt, wooden amulet (bamboo leaf pattern), bamboo bracelet (left wrist), \ngreen and white sneakers, delicate face, tiny hands, \nskin texture visible through hanfu, hair luster, \nviolet eyes, mole under left eye, jade pendant, bandaid (knee or elbow), \nhighly detailed face, highly detailed eyes, youthful appearance, \nDull skin, delicate skin, \nsneaker details: textured rubber sole, breathable mesh upper, visible stitching, subtle logo, \nholding spoon, plate, sitting, open mouth, +_+, \nsparkling eyes, hair luster, \nholding, rice, \nsmile, spoon, food, curry rice, \nshoes removed, \ntwo side up, \n)\n\nCharacter 2\n(\nfemale child, \nblack footwear, \nmedium hair, \ngreen jacket, \nholding phone, smartphone, \ndrinking straw, \nsweat, star-shaped pupils, \nprint shirt, \n)\n\nEnvironment\n(\nindoor, wooden floor, wooden table, \nchair, table, cup, drinking glass, \nsteam, bowl, soup, \nice cube, \ncouch, \nglass, star (symbol), \nfork, wooden table, pasta, \nrestaurant, \n)\n\nDetails\n(\nrealism, rich details, cinematic lighting, \nskin texture, visible stitching, \ntoes, barefoot, \npov, \nsymbol-shaped pupils, \nout of frame, foot focus, \nblush, eating, \nhand on own face, looking at viewer, \nfrom above, \nlong hair, \n)",
+        "text": "laffey ii \\\\(azur lane\\\\),long_hair,white hair,red eyes,blue hairband,blue ribbon,,(tsubasa tsubasa:0.6),(tentacle_pit:1.2),from above,(solo focus:1.1),nude,(tentacles:1.3),(tentacles_on_male:1.5),tentacle on penis,restrained,bound legs,(m_legs:1.4),(penis:1.2),(erection:1.4),testicles,(ejaculation:1.3),suggestive_fluid,(cum:1.3),(cum_string:1.3),(nipples:1.3),areolae,(embarrassed:1.3),(blush:1.1),breath,fang,(fang out:1.3),(wavy mouth:1.5),(female_orgasm:1.1),(heart:1.3),(sexually suggestive:1.3),(1boy:1.5),shota,toddler,(uncensored:1.5),cute,nsfw,(realistic:1.1),，best quality, amazing quality, very aesthetic, absurdres",
         "clip": [
-          "17",
+          "102",
           1
         ]
       },
@@ -294,9 +294,9 @@
     },
     "99": {
       "inputs": {
-        "seed": 1094143271371000,
+        "seed": 984685023395270,
         "steps": 35,
-        "cfg": 6,
+        "cfg": 7,
         "sampler_name": "euler",
         "scheduler": "normal",
         "denoise": 1,
@@ -365,13 +365,32 @@
       "_meta": {
         "title": "💾 保存图像扩展 2.83"
       }
+    },
+    "102": {
+      "inputs": {
+        "lora_name": "拉菲(sdxl).safetensors",
+        "strength_model": 0.8,
+        "strength_clip": 1,
+        "model": [
+          "17",
+          0
+        ],
+        "clip": [
+          "17",
+          1
+        ]
+      },
+      "class_type": "LoraLoader",
+      "_meta": {
+        "title": "加载LoRA"
+      }
     }
   },
   "extra_data": {
     "extra_pnginfo": {
       "workflow": {
-        "last_node_id": 101,
-        "last_link_id": 127,
+        "last_node_id": 102,
+        "last_link_id": 133,
         "nodes": [
           {
             "id": 4,
@@ -385,13 +404,13 @@
               200
             ],
             "flags": {},
-            "order": 8,
+            "order": 10,
             "mode": 0,
             "inputs": [
               {
                 "name": "clip",
                 "type": "CLIP",
-                "link": 66
+                "link": 128
               }
             ],
             "outputs": [
@@ -409,7 +428,7 @@
               "Node name for S&R": "CLIPTextEncode"
             },
             "widgets_values": [
-              "(artist:tsubasa tsubasa:0.60),\nbest quality, amazing quality, very aesthetic, absurdres,\n\n{{Character 1}}\n(\nloli, petite, \nblue long hair, almond eyes, upturned eyes, bangs, \nlight blue short transparent Hanfu, white lining, bamboo leaf embroidery, \npink leather belt, wooden amulet (bamboo leaf pattern), bamboo bracelet (left wrist), \ngreen and white sneakers, delicate face, tiny hands, \nskin texture visible through hanfu, hair luster, \nviolet eyes, mole under left eye, jade pendant, bandaid (knee or elbow), \nhighly detailed face, highly detailed eyes, youthful appearance, \nDull skin, delicate skin, \nsneaker details: textured rubber sole, breathable mesh upper, visible stitching, subtle logo, \nholding spoon, plate, sitting, open mouth, +_+, \nsparkling eyes, hair luster, \nholding, rice, \nsmile, spoon, food, curry rice, \nshoes removed, \ntwo side up, \n)\n\n{{Character 2}}\n(\nfemale child, \nblack footwear, \nmedium hair, \ngreen jacket, \nholding phone, smartphone, \ndrinking straw, \nsweat, star-shaped pupils, \nprint shirt, \n)\n\n{{Environment}}\n(\nindoor, wooden floor, wooden table, \nchair, table, cup, drinking glass, \nsteam, bowl, soup, \nice cube, \ncouch, \nglass, star (symbol), \nfork, wooden table, pasta, \nrestaurant, \n)\n\n{{Details}}\n(\nrealism, rich details, cinematic lighting, \nskin texture, visible stitching, \ntoes, barefoot, \npov, \nsymbol-shaped pupils, \nout of frame, foot focus, \nblush, eating, \nhand on own face, looking at viewer, \nfrom above, \nlong hair, \n)"
+              "laffey ii \\\\(azur lane\\\\),long_hair,white hair,red eyes,blue hairband,blue ribbon,,(tsubasa tsubasa:0.7),(toddler:1.5),loli,1girl,bandages,pussy,,(on back:1.3),(lying:1.4),(loli:1.3),(hetero:1.5),torn clothes,(1boy:1.2),outdoors,long hair,(looking at viewer:1.3),(grass:1.3),(black eyes:1.4),bandaged arm,weapon,(pov:1.4),knife inserted into vagina,bangs,(imminent rape:1.2),(spread legs:1.3),teeth,bottomless,long sleeves,(sword:1.5),(grey eyes:1.5),(arm up:1.4),(shoes:1.1),(tears:1.5),(japanese clothes:1.2),(bandaged head:1.2),leg up,dirty clothes,knee up,no panties,blush,(dirty:1.1),thigh grab,(on ground:1.4),(injury:1.4),thighs,(clenched teeth:1.4),(amputee:1.5),(parted lips:1.2),(night:1.2),rape,hair between eyes,(leg grab:1.3),blood,flat chest,blood on clothes,(mole under eye:1.1),skirt,(bandaged leg:1.3),kimono,side ponytail,disembodied limb,hand on another's face,mole,crying,(pov hands:1.1),chinese clothes,leg lift,(torn skirt:1.5),，best quality, amazing quality, very aesthetic, absurdres"
             ]
           },
           {
@@ -424,13 +443,13 @@
               200
             ],
             "flags": {},
-            "order": 7,
+            "order": 11,
             "mode": 0,
             "inputs": [
               {
                 "name": "clip",
                 "type": "CLIP",
-                "link": 65
+                "link": 129
               }
             ],
             "outputs": [
@@ -466,7 +485,7 @@
             "flags": {
               "collapsed": false
             },
-            "order": 19,
+            "order": 21,
             "mode": 0,
             "inputs": [
               {
@@ -567,8 +586,8 @@
                 "name": "MODEL",
                 "type": "MODEL",
                 "links": [
-                  71,
-                  123
+                  123,
+                  132
                 ],
                 "slot_index": 0
               },
@@ -576,9 +595,7 @@
                 "name": "CLIP",
                 "type": "CLIP",
                 "links": [
-                  65,
-                  66,
-                  120
+                  133
                 ],
                 "slot_index": 1
               },
@@ -617,7 +634,7 @@
               722
             ],
             "flags": {},
-            "order": 21,
+            "order": 22,
             "mode": 0,
             "inputs": [
               {
@@ -682,13 +699,13 @@
               262
             ],
             "flags": {},
-            "order": 17,
+            "order": 19,
             "mode": 0,
             "inputs": [
               {
                 "name": "model",
                 "type": "MODEL",
-                "link": 71
+                "link": 131
               },
               {
                 "name": "positive",
@@ -720,10 +737,10 @@
               "Node name for S&R": "KSampler"
             },
             "widgets_values": [
-              1085188903501419,
+              1053623968242719,
               "randomize",
               35,
-              6,
+              7,
               "euler",
               "normal",
               1
@@ -773,7 +790,7 @@
               186
             ],
             "flags": {},
-            "order": 12,
+            "order": 14,
             "mode": 0,
             "inputs": [
               {
@@ -881,7 +898,7 @@
               78
             ],
             "flags": {},
-            "order": 14,
+            "order": 16,
             "mode": 0,
             "inputs": [
               {
@@ -932,7 +949,7 @@
               78
             ],
             "flags": {},
-            "order": 15,
+            "order": 17,
             "mode": 0,
             "inputs": [
               {
@@ -1020,7 +1037,7 @@
               78
             ],
             "flags": {},
-            "order": 10,
+            "order": 8,
             "mode": 0,
             "inputs": [
               {
@@ -1104,7 +1121,7 @@
               78
             ],
             "flags": {},
-            "order": 11,
+            "order": 9,
             "mode": 0,
             "inputs": [
               {
@@ -1222,13 +1239,13 @@
               200
             ],
             "flags": {},
-            "order": 9,
+            "order": 12,
             "mode": 0,
             "inputs": [
               {
                 "name": "clip",
                 "type": "CLIP",
-                "link": 120
+                "link": 130
               }
             ],
             "outputs": [
@@ -1245,7 +1262,7 @@
               "Node name for S&R": "CLIPTextEncode"
             },
             "widgets_values": [
-              "(artist:tsubasa tsubasa:0.60),\nbest quality, amazing quality, very aesthetic, absurdres,\n\n{{Character 1}}\n(\nloli, petite, \nblue long hair, almond eyes, upturned eyes, bangs, \nlight blue short transparent Hanfu, white lining, bamboo leaf embroidery, \npink leather belt, wooden amulet (bamboo leaf pattern), bamboo bracelet (left wrist), \ngreen and white sneakers, delicate face, tiny hands, \nskin texture visible through hanfu, hair luster, \nviolet eyes, mole under left eye, jade pendant, bandaid (knee or elbow), \nhighly detailed face, highly detailed eyes, youthful appearance, \nDull skin, delicate skin, \nsneaker details: textured rubber sole, breathable mesh upper, visible stitching, subtle logo, \nholding spoon, plate, sitting, open mouth, +_+, \nsparkling eyes, hair luster, \nholding, rice, \nsmile, spoon, food, curry rice, \nshoes removed, \ntwo side up, \n)\n\n{{Character 2}}\n(\nfemale child, \nblack footwear, \nmedium hair, \ngreen jacket, \nholding phone, smartphone, \ndrinking straw, \nsweat, star-shaped pupils, \nprint shirt, \n)\n\n{{Environment}}\n(\nindoor, wooden floor, wooden table, \nchair, table, cup, drinking glass, \nsteam, bowl, soup, \nice cube, \ncouch, \nglass, star (symbol), \nfork, wooden table, pasta, \nrestaurant, \n)\n\n{{Details}}\n(\nrealism, rich details, cinematic lighting, \nskin texture, visible stitching, \ntoes, barefoot, \npov, \nsymbol-shaped pupils, \nout of frame, foot focus, \nblush, eating, \nhand on own face, looking at viewer, \nfrom above, \nlong hair, \n)"
+              "laffey ii \\\\(azur lane\\\\),long_hair,white hair,red eyes,blue hairband,blue ribbon,,(tsubasa tsubasa:0.6),(tentacle_pit:1.2),from above,(solo focus:1.1),nude,(tentacles:1.3),(tentacles_on_male:1.5),tentacle on penis,restrained,bound legs,(m_legs:1.4),(penis:1.2),(erection:1.4),testicles,(ejaculation:1.3),suggestive_fluid,(cum:1.3),(cum_string:1.3),(nipples:1.3),areolae,(embarrassed:1.3),(blush:1.1),breath,fang,(fang out:1.3),(wavy mouth:1.5),(female_orgasm:1.1),(heart:1.3),(sexually suggestive:1.3),(1boy:1.5),shota,toddler,(uncensored:1.5),cute,nsfw,(realistic:1.1),，best quality, amazing quality, very aesthetic, absurdres"
             ]
           },
           {
@@ -1260,7 +1277,7 @@
               262
             ],
             "flags": {},
-            "order": 16,
+            "order": 15,
             "mode": 0,
             "inputs": [
               {
@@ -1298,10 +1315,10 @@
               "Node name for S&R": "KSampler"
             },
             "widgets_values": [
-              1094143271371000,
+              984685023395270,
               "randomize",
               35,
-              6,
+              7,
               "euler",
               "normal",
               1
@@ -1414,6 +1431,61 @@
               "",
               ""
             ]
+          },
+          {
+            "id": 102,
+            "type": "LoraLoader",
+            "pos": [
+              -662.832763671875,
+              -130.66268920898438
+            ],
+            "size": [
+              315,
+              126
+            ],
+            "flags": {},
+            "order": 7,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "model",
+                "type": "MODEL",
+                "link": 132
+              },
+              {
+                "name": "clip",
+                "type": "CLIP",
+                "link": 133
+              }
+            ],
+            "outputs": [
+              {
+                "name": "MODEL",
+                "type": "MODEL",
+                "links": [
+                  131
+                ],
+                "slot_index": 0
+              },
+              {
+                "name": "CLIP",
+                "type": "CLIP",
+                "links": [
+                  128,
+                  129,
+                  130
+                ],
+                "slot_index": 1
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "LoraLoader"
+            },
+            "widgets_values": [
+              "拉菲(sdxl).safetensors",
+              0.8,
+              1
+            ]
           }
         ],
         "links": [
@@ -1440,30 +1512,6 @@
             53,
             3,
             "LATENT"
-          ],
-          [
-            65,
-            17,
-            1,
-            5,
-            0,
-            "CLIP"
-          ],
-          [
-            66,
-            17,
-            1,
-            4,
-            0,
-            "CLIP"
-          ],
-          [
-            71,
-            17,
-            0,
-            53,
-            0,
-            "MODEL"
           ],
           [
             82,
@@ -1642,14 +1690,6 @@
             "BOOLEAN"
           ],
           [
-            120,
-            17,
-            1,
-            98,
-            0,
-            "CLIP"
-          ],
-          [
             121,
             98,
             0,
@@ -1704,6 +1744,54 @@
             100,
             1,
             "VAE"
+          ],
+          [
+            128,
+            102,
+            1,
+            4,
+            0,
+            "CLIP"
+          ],
+          [
+            129,
+            102,
+            1,
+            5,
+            0,
+            "CLIP"
+          ],
+          [
+            130,
+            102,
+            1,
+            98,
+            0,
+            "CLIP"
+          ],
+          [
+            131,
+            102,
+            0,
+            53,
+            0,
+            "MODEL"
+          ],
+          [
+            132,
+            17,
+            0,
+            102,
+            0,
+            "MODEL"
+          ],
+          [
+            133,
+            17,
+            1,
+            102,
+            1,
+            "CLIP"
           ]
         ],
         "groups": [],
@@ -1712,10 +1800,10 @@
         },
         "extra": {
           "ds": {
-            "scale": 0.8264462809917354,
+            "scale": 1.1,
             "offset": [
-              127.93043788269405,
-              -72.78503506462367
+              770.4333287917856,
+              7.85163766264935
             ]
           },
           "node_versions": {

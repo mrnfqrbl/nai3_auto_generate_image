@@ -70,6 +70,9 @@ class 提示词生成器:
                如果输入为 artist文件 则指定无效
 
       """
+        # self.提取的角色 = None
+        # self.提取的画风 = None
+        # self.提取的动作 = None
         self.root_dir=kwargs.get('root_dir', '')
         self.角色 = kwargs.get('角色', None)
         self.画风 = kwargs.get('画风', None)
@@ -120,11 +123,30 @@ class 提示词生成器:
             raise e
 
 
-    def 提示词组合(self, sd: bool= False):  # 添加 sd 参数，类型为布尔值
+    def 提示词组合(self, sd: bool= False,**输入):  # 添加 sd 参数，类型为布尔值
 
-        提取角色 = self.角色提取()
-        提取画风 = self.画风提取()
-        提取动作 = self.动作提取()
+        角色 = 输入.get('角色', None)
+        画风 = 输入.get('画风', None)
+        动作 = 输入.get('动作', None)
+        动作权重 = 输入.get('动作权重', False)
+        if isinstance(角色, str):
+            提取角色 = 角色
+
+        else:
+            提取角色 = self.角色提取()
+
+        if isinstance(画风, str):
+            提取画风 = 画风
+        else:
+            提取画风 = self.画风提取()
+        if isinstance(动作, str):
+            提取动作 = 动作
+        else:
+            提取动作 = self.动作提取()
+
+
+
+
 
         if sd:  # 如果 sd 为 True，则处理提取画风
             画风列表 = 提取画风.replace("{", "").replace("}", "").replace("[", "").replace("]", "").split(",")  # 移除花括号和方括号并分割
@@ -132,7 +154,7 @@ class 提示词生成器:
             处理后的画风列表 = []
 
             for 画风 in 画风列表:
-                权重 = random.uniform(0.5, 0.7)  # 随机生成 0.5 到 0.7 的权重
+                权重 = random.uniform(0.5, 0.9)  # 随机生成 0.5 到 0.7 的权重
                 处理后的画风列表.append(f"({画风.strip()}:{权重:.1f})")  # 添加权重并格式化
             logger.debug(f"处理后的画风：{处理后的画风列表}")
             提取画风 = ",".join(处理后的画风列表)  # 将处理后的画风列表连接成字符串
@@ -147,18 +169,19 @@ class 提示词生成器:
             提取角色 = ",".join(处理后的角色列表)  # 将处理后的画风列表连接成字符串
             动作列表= 提取动作.replace("{", "").replace("}", "").replace("[", "").replace("]", "").split(",")  # 移除花括号和方括号并分割
             处理后的动作列表 = []
+            if 动作权重:
 
-            for 动作 in 动作列表:
-                if random.random() < 0.5:  # 50% 的概率不附加权重
-                    处理后的动作列表.append(动作.strip())  # 只添加动作，不添加权重
-                else:
-                    权重 = random.uniform(1.1, 1.5)  # 随机生成 1.1 到 1.5 的权重
-                    处理后的动作列表.append(f"({动作.strip()}:{权重:.1f})")  # 添加权重并格式化
-                # 权重 = random.uniform(1.1, 1.5)  # 随机生成 0.5 到 0.7 的权重
-                # 处理后的动作列表.append(f"({动作.strip()}:{权重:.1f})")  # 添加权重并格式化
-            logger.debug(f"处理后的动作：{处理后的动作列表}")
-            提取动作 = ",".join(处理后的动作列表)  # 将处理后的画风列表连接成字符串
-
+                for 动作 in 动作列表:
+                    if random.random() < 0.5:  # 50% 的概率不附加权重
+                        处理后的动作列表.append(动作.strip())  # 只添加动作，不添加权重
+                    else:
+                        权重 = random.uniform(1.1, 1.5)  # 随机生成 1.1 到 1.5 的权重
+                        处理后的动作列表.append(f"({动作.strip()}:{权重:.1f})")  # 添加权重并格式化
+                    # 权重 = random.uniform(1.1, 1.5)  # 随机生成 0.5 到 0.7 的权重
+                    # 处理后的动作列表.append(f"({动作.strip()}:{权重:.1f})")  # 添加权重并格式化
+                logger.debug(f"处理后的动作：{处理后的动作列表}")
+                提取动作 = ",".join(处理后的动作列表)  # 将处理后的画风列表连接成字符串
+            提取动作 = ",".join(动作列表)  # 将处理后的画风列表连接成字符串
 
         if self.角色是否可无:
             if random.random() > 0.3:  # 随机决定是否添加角色
@@ -336,110 +359,3 @@ if __name__ == "__main__":
 
 
 
-
-
-# class 提示词生成器:
-#     """
-#     一个用于生成图像生成提示词的类。
-#     """
-#
-#     def __init__(self, *args, **kwargs):
-#         """
-#         初始化 提示词生成器 对象。
-#
-#         参数：
-#             角色 (dict, optional): 角色字典，键为角色ID（字符串），值为角色描述文本。
-#             画风 (dict or list, optional): 画风字典或列表。
-#                  如果为字典，键为画风ID（字符串），值为画风描述文本。
-#                  如果为列表，则直接使用画风描述文本列表。
-#             动作 (dict, optional): 动作字典，键为动作ID（字符串），值为动作描述文本。
-#             质量 (str, optional): 图像质量描述字符串，默认为 "best quality, amazing quality, very aesthetic, absurdres"。
-#         """
-#         self.角色 = kwargs.get('角色', None)
-#         self.画风 = kwargs.get('画风', None)
-#         self.动作 = kwargs.get('动作', None)
-#         self.质量 = kwargs.get('质量', "best quality, amazing quality, very aesthetic, absurdres")
-#
-#         # 如果 '画风' 参数是字典，则直接使用，否则尝试加载画风数据
-#         if isinstance(self.画风, dict):
-#             self.画风 = self.画风
-#         else:
-#             self.画师数据 = self._加载画师数据('../../data/artist.json')
-#             self.画风 = None  # 初始时设置为 None，后续可能被设置为加载的数据
-#
-#         self.角色索引 = 0
-#         self.画风索引 = 0
-#         self.动作索引 = 0
-#
-#
-#     def 生成提示词(self, 是否随机=False):
-#         """
-#         生成提示词。
-#
-#         参数：
-#             是否随机 (bool, optional): 是否随机选择角色、画风和动作。默认为 False。
-#
-#         返回：
-#             str: 生成的提示词字符串。
-#         """
-#         if self.画风 is None:
-#             self.画风 = self.画师数据  # 如果画风未加载，则使用加载的数据
-#
-#         if isinstance(self.画风, list):
-#             # 从画风列表中随机选择几个画风
-#             画师数量 = random.randint(3, 7)
-#             选取的画风 = ", ".join(
-#                 f"artist:{画师.strip()}" for 画师 in random.sample(self.画风, min(画师数量, len(self.画风)))
-#             )
-#             parts = [选取的画风, self.质量.strip()]
-#         elif isinstance(self.画风, dict):
-#             # 根据 是否随机 参数，选择随机或顺序提取
-#             if 是否随机:
-#                 选取的角色 = self.角色[str(random.randint(1, len(self.角色)))]
-#                 选取的画风 = self.画风[str(random.randint(1, len(self.画风)))]
-#                 选取的动作 = self.动作[str(random.randint(1, len(self.动作)))]
-#             else:
-#                 选取的角色 = self.角色[str(self.角色索引 + 1)]
-#                 选取的画风 = self.画风[str(self.画风索引 + 1)]
-#                 选取的动作 = self.动作[str(self.动作索引 + 1)]
-#
-#                 # 更新索引，实现顺序提取
-#                 self.角色索引 = (self.角色索引 + 1) % len(self.角色)
-#                 self.画风索引 = (self.画风索引 + 1) % len(self.画风)
-#                 self.动作索引 = (self.动作索引 + 1) % len(self.动作)
-#
-#             parts = [选取的角色.strip(), 选取的画风.strip(), 选取的动作.strip(), self.质量.strip()]
-#         else:
-#             parts = [self.质量.strip()]
-#
-#         # 拼接非空部分
-#         提示词 = ', '.join(filter(None, parts))
-#         return 提示词
-#
-#
-#     def _加载画师数据(self, 文件路径):
-#         """
-#         从指定文件加载画风数据。
-#
-#         参数：
-#             文件路径 (str): 画风数据文件的路径。
-#
-#         返回：
-#             list or None: 画风数据列表，如果加载失败则返回 None。
-#         """
-#         try:
-#             with open(文件路径, 'r', encoding='utf-8') as f:
-#                 data = json.load(f)
-#                 # 假设数据结构是 [ { "id": 1, "value": "xxx" }, ... ]
-#                 if isinstance(data, list):
-#                     return [item["value"] for item in data]
-#                 else:
-#                     print(f"警告：画风数据文件 {文件路径} 格式不正确。")
-#                     return None
-#         except FileNotFoundError:
-#             print(f"警告：找不到画风数据文件：{文件路径}。请确保文件存在并包含有效的 JSON 数据。")
-#             return None
-#         except json.JSONDecodeError:
-#             print(f"警告：画风数据文件 {文件路径} 包含无效的 JSON 数据。")
-#             return None
-#

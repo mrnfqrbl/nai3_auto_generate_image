@@ -1,11 +1,11 @@
 {
-  "client_id": "8d191a172a93453aa4d647ab4ea85133",
+  "client_id": "b38f2f374c1b4866b7a9bb8c67fdfe67",
   "prompt": {
     "4": {
       "inputs": {
-        "text": "(artist:tsubasa tsubasa:0.60),\nbest quality, amazing quality, very aesthetic, absurdres,\n\nCharacter 1\n(\nloli, petite, \nblue long hair, almond eyes, upturned eyes, bangs, \nlight blue short transparent Hanfu, white lining, bamboo leaf embroidery, \npink leather belt, wooden amulet (bamboo leaf pattern), bamboo bracelet (left wrist), \ngreen and white sneakers, delicate face, tiny hands, \nskin texture visible through hanfu, hair luster, \nviolet eyes, mole under left eye, jade pendant, bandaid (knee or elbow), \nhighly detailed face, highly detailed eyes, youthful appearance, \nDull skin, delicate skin, \nsneaker details: textured rubber sole, breathable mesh upper, visible stitching, subtle logo, \nholding spoon, plate, sitting, open mouth, +_+, \nsparkling eyes, hair luster, \nholding, rice, \nsmile, spoon, food, curry rice, \nshoes removed, \ntwo side up, \n)\n\nCharacter 2\n(\nfemale child, \nblack footwear, \nmedium hair, \ngreen jacket, \nholding phone, smartphone, \ndrinking straw, \nsweat, star-shaped pupils, \nprint shirt, \n)\n\nEnvironment\n(\nindoor, wooden floor, wooden table, \nchair, table, cup, drinking glass, \nsteam, bowl, soup, \nice cube, \ncouch, \nglass, star (symbol), \nfork, wooden table, pasta, \nrestaurant, \n)\n\nDetails\n(\nrealism, rich details, cinematic lighting, \nskin texture, visible stitching, \ntoes, barefoot, \npov, \nsymbol-shaped pupils, \nout of frame, foot focus, \nblush, eating, \nhand on own face, looking at viewer, \nfrom above, \nlong hair, \n)",
+        "text": "laffey ii \\\\(azur lane\\\\),long_hair,white hair,red eyes,blue hairband,blue ribbon,,(tsubasa tsubasa:0.8),(angel:1.1),petite,(innocent:1.4),(shiny skin:1.5),(from_behind:1.1),upper body,(close up:1.3),(sunset:1.2),floating light spot,cloudy,rainbow,bubble,1girl,solo,(nude:1.2),(eyewear_on_head:1.1),sunglasses,(looking_back:1.4),x3,blush,(off_shoulder:1.2),bare_shoulders,white marble glowing skin,beautiful detailed eyes,bangs,(braid:1.4),(long_hair:1.3),(very_long_hair:1.1),(:1.4)，best quality, amazing quality, very aesthetic, absurdres",
         "clip": [
-          "17",
+          "102",
           1
         ]
       },
@@ -18,7 +18,7 @@
       "inputs": {
         "text": "worst quality, low quality, normal quality, low contrast, blurry, pixelated, overcompressed,underwear,Wrong number of fingers, stuck fingers, twisted limbs, wrong limbs, wrong eyes, asymmetrical eyes,Skin reflection, skin radiance,logo,text,\n",
         "clip": [
-          "17",
+          "102",
           1
         ]
       },
@@ -62,7 +62,7 @@
     },
     "17": {
       "inputs": {
-        "ckpt_name": "ntrMIXIllustriousXL_xiii.safetensors"
+        "ckpt_name": "noobaiXLNAIXL_vPred10Version.safetensors"
       },
       "class_type": "unCLIPCheckpointLoader",
       "_meta": {
@@ -99,14 +99,14 @@
     },
     "53": {
       "inputs": {
-        "seed": 1085188903501419,
+        "seed": 1053623968242719,
         "steps": 35,
-        "cfg": 6,
+        "cfg": 7,
         "sampler_name": "euler",
         "scheduler": "normal",
         "denoise": 1,
         "model": [
-          "17",
+          "102",
           0
         ],
         "positive": [
@@ -281,9 +281,9 @@
     },
     "98": {
       "inputs": {
-        "text": "(artist:tsubasa tsubasa:0.60),\nbest quality, amazing quality, very aesthetic, absurdres,\n\nCharacter 1\n(\nloli, petite, \nblue long hair, almond eyes, upturned eyes, bangs, \nlight blue short transparent Hanfu, white lining, bamboo leaf embroidery, \npink leather belt, wooden amulet (bamboo leaf pattern), bamboo bracelet (left wrist), \ngreen and white sneakers, delicate face, tiny hands, \nskin texture visible through hanfu, hair luster, \nviolet eyes, mole under left eye, jade pendant, bandaid (knee or elbow), \nhighly detailed face, highly detailed eyes, youthful appearance, \nDull skin, delicate skin, \nsneaker details: textured rubber sole, breathable mesh upper, visible stitching, subtle logo, \nholding spoon, plate, sitting, open mouth, +_+, \nsparkling eyes, hair luster, \nholding, rice, \nsmile, spoon, food, curry rice, \nshoes removed, \ntwo side up, \n)\n\nCharacter 2\n(\nfemale child, \nblack footwear, \nmedium hair, \ngreen jacket, \nholding phone, smartphone, \ndrinking straw, \nsweat, star-shaped pupils, \nprint shirt, \n)\n\nEnvironment\n(\nindoor, wooden floor, wooden table, \nchair, table, cup, drinking glass, \nsteam, bowl, soup, \nice cube, \ncouch, \nglass, star (symbol), \nfork, wooden table, pasta, \nrestaurant, \n)\n\nDetails\n(\nrealism, rich details, cinematic lighting, \nskin texture, visible stitching, \ntoes, barefoot, \npov, \nsymbol-shaped pupils, \nout of frame, foot focus, \nblush, eating, \nhand on own face, looking at viewer, \nfrom above, \nlong hair, \n)",
+        "text": "laffey ii \\\\(azur lane\\\\),long_hair,white hair,red eyes,blue hairband,blue ribbon,,(tsubasa tsubasa:0.5),unreviewed，year 2023,(nsfw:1.5),(flat_chest，pale_skin，dynamic angle:1.4),indoor,(computer:1.3),(gaming display:1.4),night,light,energy drinks,look at the display,(headphones:1.2),gaming chair,(gamepad:1.2),(bare legs:1.2),white shirt,(drak:1.2),(nintendo switch:1.2),(foot focus:1.3),leg lift,(leg up:1.2),(white panties:1.2),white thighhighs,(High_contrast / Perfect_lighting / etc:1.4),light\\xa0rendering,floating light spot，best quality, amazing quality, very aesthetic, absurdres",
         "clip": [
-          "17",
+          "102",
           1
         ]
       },
@@ -294,9 +294,9 @@
     },
     "99": {
       "inputs": {
-        "seed": 1094143271371000,
+        "seed": 984685023395270,
         "steps": 35,
-        "cfg": 6,
+        "cfg": 7,
         "sampler_name": "euler",
         "scheduler": "normal",
         "denoise": 1,
@@ -365,13 +365,32 @@
       "_meta": {
         "title": "💾 保存图像扩展 2.83"
       }
+    },
+    "102": {
+      "inputs": {
+        "lora_name": "拉菲(sdxl).safetensors",
+        "strength_model": 0.8,
+        "strength_clip": 1,
+        "model": [
+          "17",
+          0
+        ],
+        "clip": [
+          "17",
+          1
+        ]
+      },
+      "class_type": "LoraLoader",
+      "_meta": {
+        "title": "加载LoRA"
+      }
     }
   },
   "extra_data": {
     "extra_pnginfo": {
       "workflow": {
-        "last_node_id": 101,
-        "last_link_id": 127,
+        "last_node_id": 102,
+        "last_link_id": 133,
         "nodes": [
           {
             "id": 4,
@@ -385,13 +404,13 @@
               200
             ],
             "flags": {},
-            "order": 8,
+            "order": 11,
             "mode": 0,
             "inputs": [
               {
                 "name": "clip",
                 "type": "CLIP",
-                "link": 66
+                "link": 128
               }
             ],
             "outputs": [
@@ -409,7 +428,7 @@
               "Node name for S&R": "CLIPTextEncode"
             },
             "widgets_values": [
-              "(artist:tsubasa tsubasa:0.60),\nbest quality, amazing quality, very aesthetic, absurdres,\n\n{{Character 1}}\n(\nloli, petite, \nblue long hair, almond eyes, upturned eyes, bangs, \nlight blue short transparent Hanfu, white lining, bamboo leaf embroidery, \npink leather belt, wooden amulet (bamboo leaf pattern), bamboo bracelet (left wrist), \ngreen and white sneakers, delicate face, tiny hands, \nskin texture visible through hanfu, hair luster, \nviolet eyes, mole under left eye, jade pendant, bandaid (knee or elbow), \nhighly detailed face, highly detailed eyes, youthful appearance, \nDull skin, delicate skin, \nsneaker details: textured rubber sole, breathable mesh upper, visible stitching, subtle logo, \nholding spoon, plate, sitting, open mouth, +_+, \nsparkling eyes, hair luster, \nholding, rice, \nsmile, spoon, food, curry rice, \nshoes removed, \ntwo side up, \n)\n\n{{Character 2}}\n(\nfemale child, \nblack footwear, \nmedium hair, \ngreen jacket, \nholding phone, smartphone, \ndrinking straw, \nsweat, star-shaped pupils, \nprint shirt, \n)\n\n{{Environment}}\n(\nindoor, wooden floor, wooden table, \nchair, table, cup, drinking glass, \nsteam, bowl, soup, \nice cube, \ncouch, \nglass, star (symbol), \nfork, wooden table, pasta, \nrestaurant, \n)\n\n{{Details}}\n(\nrealism, rich details, cinematic lighting, \nskin texture, visible stitching, \ntoes, barefoot, \npov, \nsymbol-shaped pupils, \nout of frame, foot focus, \nblush, eating, \nhand on own face, looking at viewer, \nfrom above, \nlong hair, \n)"
+              "laffey ii \\\\(azur lane\\\\),long_hair,white hair,red eyes,blue hairband,blue ribbon,,(tsubasa tsubasa:0.8),(angel:1.1),petite,(innocent:1.4),(shiny skin:1.5),(from_behind:1.1),upper body,(close up:1.3),(sunset:1.2),floating light spot,cloudy,rainbow,bubble,1girl,solo,(nude:1.2),(eyewear_on_head:1.1),sunglasses,(looking_back:1.4),x3,blush,(off_shoulder:1.2),bare_shoulders,white marble glowing skin,beautiful detailed eyes,bangs,(braid:1.4),(long_hair:1.3),(very_long_hair:1.1),(:1.4)，best quality, amazing quality, very aesthetic, absurdres"
             ]
           },
           {
@@ -424,13 +443,13 @@
               200
             ],
             "flags": {},
-            "order": 7,
+            "order": 12,
             "mode": 0,
             "inputs": [
               {
                 "name": "clip",
                 "type": "CLIP",
-                "link": 65
+                "link": 129
               }
             ],
             "outputs": [
@@ -466,7 +485,7 @@
             "flags": {
               "collapsed": false
             },
-            "order": 19,
+            "order": 21,
             "mode": 0,
             "inputs": [
               {
@@ -507,7 +526,7 @@
               106
             ],
             "flags": {},
-            "order": 13,
+            "order": 10,
             "mode": 0,
             "inputs": [
               {
@@ -559,7 +578,7 @@
               118
             ],
             "flags": {},
-            "order": 0,
+            "order": 6,
             "mode": 0,
             "inputs": [],
             "outputs": [
@@ -567,8 +586,8 @@
                 "name": "MODEL",
                 "type": "MODEL",
                 "links": [
-                  71,
-                  123
+                  123,
+                  132
                 ],
                 "slot_index": 0
               },
@@ -576,9 +595,7 @@
                 "name": "CLIP",
                 "type": "CLIP",
                 "links": [
-                  65,
-                  66,
-                  120
+                  133
                 ],
                 "slot_index": 1
               },
@@ -602,7 +619,7 @@
               "Node name for S&R": "unCLIPCheckpointLoader"
             },
             "widgets_values": [
-              "ntrMIXIllustriousXL_xiii.safetensors"
+              "noobaiXLNAIXL_vPred10Version.safetensors"
             ]
           },
           {
@@ -617,7 +634,7 @@
               722
             ],
             "flags": {},
-            "order": 21,
+            "order": 22,
             "mode": 0,
             "inputs": [
               {
@@ -682,13 +699,13 @@
               262
             ],
             "flags": {},
-            "order": 17,
+            "order": 19,
             "mode": 0,
             "inputs": [
               {
                 "name": "model",
                 "type": "MODEL",
-                "link": 71
+                "link": 131
               },
               {
                 "name": "positive",
@@ -720,10 +737,10 @@
               "Node name for S&R": "KSampler"
             },
             "widgets_values": [
-              1085188903501419,
+              1053623968242719,
               "randomize",
               35,
-              6,
+              7,
               "euler",
               "normal",
               1
@@ -741,7 +758,7 @@
               58
             ],
             "flags": {},
-            "order": 1,
+            "order": 0,
             "mode": 0,
             "inputs": [],
             "outputs": [
@@ -773,7 +790,7 @@
               186
             ],
             "flags": {},
-            "order": 12,
+            "order": 14,
             "mode": 0,
             "inputs": [
               {
@@ -841,7 +858,7 @@
               314
             ],
             "flags": {},
-            "order": 2,
+            "order": 1,
             "mode": 0,
             "inputs": [],
             "outputs": [
@@ -881,7 +898,7 @@
               78
             ],
             "flags": {},
-            "order": 14,
+            "order": 16,
             "mode": 0,
             "inputs": [
               {
@@ -932,7 +949,7 @@
               78
             ],
             "flags": {},
-            "order": 15,
+            "order": 17,
             "mode": 0,
             "inputs": [
               {
@@ -983,7 +1000,7 @@
               58
             ],
             "flags": {},
-            "order": 3,
+            "order": 2,
             "mode": 0,
             "inputs": [],
             "outputs": [
@@ -1020,7 +1037,7 @@
               78
             ],
             "flags": {},
-            "order": 10,
+            "order": 7,
             "mode": 0,
             "inputs": [
               {
@@ -1071,7 +1088,7 @@
               58
             ],
             "flags": {},
-            "order": 4,
+            "order": 3,
             "mode": 0,
             "inputs": [],
             "outputs": [
@@ -1104,7 +1121,7 @@
               78
             ],
             "flags": {},
-            "order": 11,
+            "order": 8,
             "mode": 0,
             "inputs": [
               {
@@ -1155,7 +1172,7 @@
               58
             ],
             "flags": {},
-            "order": 5,
+            "order": 4,
             "mode": 0,
             "inputs": [],
             "outputs": [
@@ -1188,7 +1205,7 @@
               58
             ],
             "flags": {},
-            "order": 6,
+            "order": 5,
             "mode": 0,
             "inputs": [],
             "outputs": [
@@ -1222,13 +1239,13 @@
               200
             ],
             "flags": {},
-            "order": 9,
+            "order": 13,
             "mode": 0,
             "inputs": [
               {
                 "name": "clip",
                 "type": "CLIP",
-                "link": 120
+                "link": 130
               }
             ],
             "outputs": [
@@ -1245,7 +1262,7 @@
               "Node name for S&R": "CLIPTextEncode"
             },
             "widgets_values": [
-              "(artist:tsubasa tsubasa:0.60),\nbest quality, amazing quality, very aesthetic, absurdres,\n\n{{Character 1}}\n(\nloli, petite, \nblue long hair, almond eyes, upturned eyes, bangs, \nlight blue short transparent Hanfu, white lining, bamboo leaf embroidery, \npink leather belt, wooden amulet (bamboo leaf pattern), bamboo bracelet (left wrist), \ngreen and white sneakers, delicate face, tiny hands, \nskin texture visible through hanfu, hair luster, \nviolet eyes, mole under left eye, jade pendant, bandaid (knee or elbow), \nhighly detailed face, highly detailed eyes, youthful appearance, \nDull skin, delicate skin, \nsneaker details: textured rubber sole, breathable mesh upper, visible stitching, subtle logo, \nholding spoon, plate, sitting, open mouth, +_+, \nsparkling eyes, hair luster, \nholding, rice, \nsmile, spoon, food, curry rice, \nshoes removed, \ntwo side up, \n)\n\n{{Character 2}}\n(\nfemale child, \nblack footwear, \nmedium hair, \ngreen jacket, \nholding phone, smartphone, \ndrinking straw, \nsweat, star-shaped pupils, \nprint shirt, \n)\n\n{{Environment}}\n(\nindoor, wooden floor, wooden table, \nchair, table, cup, drinking glass, \nsteam, bowl, soup, \nice cube, \ncouch, \nglass, star (symbol), \nfork, wooden table, pasta, \nrestaurant, \n)\n\n{{Details}}\n(\nrealism, rich details, cinematic lighting, \nskin texture, visible stitching, \ntoes, barefoot, \npov, \nsymbol-shaped pupils, \nout of frame, foot focus, \nblush, eating, \nhand on own face, looking at viewer, \nfrom above, \nlong hair, \n)"
+              "laffey ii \\\\(azur lane\\\\),long_hair,white hair,red eyes,blue hairband,blue ribbon,,(tsubasa tsubasa:0.5),unreviewed，year 2023,(nsfw:1.5),(flat_chest，pale_skin，dynamic angle:1.4),indoor,(computer:1.3),(gaming display:1.4),night,light,energy drinks,look at the display,(headphones:1.2),gaming chair,(gamepad:1.2),(bare legs:1.2),white shirt,(drak:1.2),(nintendo switch:1.2),(foot focus:1.3),leg lift,(leg up:1.2),(white panties:1.2),white thighhighs,(High_contrast / Perfect_lighting / etc:1.4),light\\xa0rendering,floating light spot，best quality, amazing quality, very aesthetic, absurdres"
             ]
           },
           {
@@ -1260,7 +1277,7 @@
               262
             ],
             "flags": {},
-            "order": 16,
+            "order": 15,
             "mode": 0,
             "inputs": [
               {
@@ -1298,10 +1315,10 @@
               "Node name for S&R": "KSampler"
             },
             "widgets_values": [
-              1094143271371000,
+              984685023395270,
               "randomize",
               35,
-              6,
+              7,
               "euler",
               "normal",
               1
@@ -1414,6 +1431,61 @@
               "",
               ""
             ]
+          },
+          {
+            "id": 102,
+            "type": "LoraLoader",
+            "pos": [
+              -700.1055908203125,
+              -119.75361633300781
+            ],
+            "size": [
+              315,
+              126
+            ],
+            "flags": {},
+            "order": 9,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "model",
+                "type": "MODEL",
+                "link": 132
+              },
+              {
+                "name": "clip",
+                "type": "CLIP",
+                "link": 133
+              }
+            ],
+            "outputs": [
+              {
+                "name": "MODEL",
+                "type": "MODEL",
+                "links": [
+                  131
+                ],
+                "slot_index": 0
+              },
+              {
+                "name": "CLIP",
+                "type": "CLIP",
+                "links": [
+                  128,
+                  129,
+                  130
+                ],
+                "slot_index": 1
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "LoraLoader"
+            },
+            "widgets_values": [
+              "拉菲(sdxl).safetensors",
+              0.8,
+              1
+            ]
           }
         ],
         "links": [
@@ -1440,30 +1512,6 @@
             53,
             3,
             "LATENT"
-          ],
-          [
-            65,
-            17,
-            1,
-            5,
-            0,
-            "CLIP"
-          ],
-          [
-            66,
-            17,
-            1,
-            4,
-            0,
-            "CLIP"
-          ],
-          [
-            71,
-            17,
-            0,
-            53,
-            0,
-            "MODEL"
           ],
           [
             82,
@@ -1642,14 +1690,6 @@
             "BOOLEAN"
           ],
           [
-            120,
-            17,
-            1,
-            98,
-            0,
-            "CLIP"
-          ],
-          [
             121,
             98,
             0,
@@ -1704,6 +1744,54 @@
             100,
             1,
             "VAE"
+          ],
+          [
+            128,
+            102,
+            1,
+            4,
+            0,
+            "CLIP"
+          ],
+          [
+            129,
+            102,
+            1,
+            5,
+            0,
+            "CLIP"
+          ],
+          [
+            130,
+            102,
+            1,
+            98,
+            0,
+            "CLIP"
+          ],
+          [
+            131,
+            102,
+            0,
+            53,
+            0,
+            "MODEL"
+          ],
+          [
+            132,
+            17,
+            0,
+            102,
+            0,
+            "MODEL"
+          ],
+          [
+            133,
+            17,
+            1,
+            102,
+            1,
+            "CLIP"
           ]
         ],
         "groups": [],
@@ -1712,10 +1800,10 @@
         },
         "extra": {
           "ds": {
-            "scale": 0.8264462809917354,
+            "scale": 1,
             "offset": [
-              127.93043788269405,
-              -72.78503506462367
+              581.3573833372398,
+              71.88459220810387
             ]
           },
           "node_versions": {

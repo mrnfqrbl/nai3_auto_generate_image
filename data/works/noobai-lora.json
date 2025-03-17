@@ -1,0 +1,1364 @@
+{
+  "client_id": "fee7610778984291bafd2985a4c5cc70",
+  "prompt": {
+    "4": {
+      "inputs": {
+        "text": "laffey ii \\\\(azur lane\\\\),long_hair,white hair,red eyes,blue hairband,blue ribbon,,(tsubasa tsubasa:0.6),unreviewed,khyle.xinzoruo,year 2023,nsfw,flat_chest，pale_skin，facing away,wide hips,hem,nude,anus,pussy,seiza,sitting on own feet,feet under ass,steaming feet,from behind,darkness,close-up,focus ass,High_contrast / Perfect_lighting / etc,light\\xa0rendering,floating light spot，best quality, amazing quality, very aesthetic, absurdres",
+        "clip": [
+          "102",
+          1
+        ]
+      },
+      "class_type": "CLIPTextEncode",
+      "_meta": {
+        "title": "CLIP文本编码"
+      }
+    },
+    "5": {
+      "inputs": {
+        "text": "worst quality, low quality, normal quality, low contrast, blurry, pixelated, overcompressed,underwear,Wrong number of fingers, stuck fingers, twisted limbs, wrong limbs, wrong eyes, asymmetrical eyes,Skin reflection, skin radiance,logo,text,\n",
+        "clip": [
+          "102",
+          1
+        ]
+      },
+      "class_type": "CLIPTextEncode",
+      "_meta": {
+        "title": "CLIP文本编码"
+      }
+    },
+    "8": {
+      "inputs": {
+        "samples": [
+          "53",
+          0
+        ],
+        "vae": [
+          "17",
+          2
+        ]
+      },
+      "class_type": "VAEDecode",
+      "_meta": {
+        "title": "VAE解码"
+      }
+    },
+    "15": {
+      "inputs": {
+        "width": [
+          "95",
+          0
+        ],
+        "height": [
+          "84",
+          0
+        ],
+        "batch_size": 2
+      },
+      "class_type": "EmptyLatentImage",
+      "_meta": {
+        "title": "空Latent图像"
+      }
+    },
+    "17": {
+      "inputs": {
+        "ckpt_name": "noobaiXLNAIXL_vPred10Version.safetensors"
+      },
+      "class_type": "unCLIPCheckpointLoader",
+      "_meta": {
+        "title": "unCLIPCheckpoint加载器"
+      }
+    },
+    "39": {
+      "inputs": {
+        "filename_prefix": "线程1",
+        "filename_keys": "%H-%M-%S",
+        "foldername_prefix": "",
+        "foldername_keys": "%F",
+        "delimiter": "-",
+        "save_job_data": "disabled",
+        "job_data_per_image": false,
+        "job_custom_text": "",
+        "save_metadata": true,
+        "counter_digits": 4,
+        "counter_position": "first",
+        "one_counter_per_folder": true,
+        "image_preview": true,
+        "output_ext": ".png",
+        "quality": 90,
+        "named_keys": false,
+        "images": [
+          "8",
+          0
+        ]
+      },
+      "class_type": "SaveImageExtended",
+      "_meta": {
+        "title": "💾 保存图像扩展 2.83"
+      }
+    },
+    "53": {
+      "inputs": {
+        "seed": 1053623968242719,
+        "steps": 35,
+        "cfg": 7,
+        "sampler_name": "euler",
+        "scheduler": "normal",
+        "denoise": 1,
+        "model": [
+          "102",
+          0
+        ],
+        "positive": [
+          "4",
+          0
+        ],
+        "negative": [
+          "5",
+          0
+        ],
+        "latent_image": [
+          "15",
+          0
+        ]
+      },
+      "class_type": "KSampler",
+      "_meta": {
+        "title": "K采样器"
+      }
+    },
+    "84": {
+      "inputs": {
+        "boolean": [
+          "97",
+          0
+        ],
+        "on_true": [
+          "96",
+          0
+        ],
+        "on_false": [
+          "94",
+          0
+        ]
+      },
+      "class_type": "Switch any [Crystools]",
+      "_meta": {
+        "title": "🪛 Switch any"
+      }
+    },
+    "94": {
+      "inputs": {
+        "int": 1000
+      },
+      "class_type": "Primitive integer [Crystools]",
+      "_meta": {
+        "title": "🪛 Primitive integer"
+      }
+    },
+    "95": {
+      "inputs": {
+        "boolean": [
+          "97",
+          0
+        ],
+        "on_true": [
+          "94",
+          0
+        ],
+        "on_false": [
+          "96",
+          0
+        ]
+      },
+      "class_type": "Switch any [Crystools]",
+      "_meta": {
+        "title": "🪛 Switch any"
+      }
+    },
+    "96": {
+      "inputs": {
+        "int": 1464
+      },
+      "class_type": "Primitive integer [Crystools]",
+      "_meta": {
+        "title": "🪛 Primitive integer"
+      }
+    },
+    "97": {
+      "inputs": {
+        "boolean": true
+      },
+      "class_type": "Primitive boolean [Crystools]",
+      "_meta": {
+        "title": "尺寸，true为竖向"
+      }
+    },
+    "98": {
+      "inputs": {
+        "text": "laffey ii \\\\(azur lane\\\\),long_hair,white hair,red eyes,blue hairband,blue ribbon,,(tsubasa tsubasa:0.8),white stockings, no underwear, solo, loli, White socks,sneakers,Chinese cultivation battle, martial arts, Taoist magic, sword fighting, mystical energy, glowing spiritual aura, ancient Chinese landscape, ethereal fog, flying through the air, powerful energy blasts, elemental forces, graceful movements, intense combat, traditional robes, dramatic atmosphere, magical sword strikes ,breasts,Pussy,anus，best quality, amazing quality, very aesthetic, absurdres",
+        "clip": [
+          "102",
+          1
+        ]
+      },
+      "class_type": "CLIPTextEncode",
+      "_meta": {
+        "title": "CLIP文本编码"
+      }
+    },
+    "99": {
+      "inputs": {
+        "seed": 984685023395270,
+        "steps": 35,
+        "cfg": 7,
+        "sampler_name": "euler",
+        "scheduler": "normal",
+        "denoise": 1,
+        "model": [
+          "102",
+          0
+        ],
+        "positive": [
+          "98",
+          0
+        ],
+        "negative": [
+          "5",
+          0
+        ],
+        "latent_image": [
+          "15",
+          0
+        ]
+      },
+      "class_type": "KSampler",
+      "_meta": {
+        "title": "K采样器"
+      }
+    },
+    "100": {
+      "inputs": {
+        "samples": [
+          "99",
+          0
+        ],
+        "vae": [
+          "17",
+          2
+        ]
+      },
+      "class_type": "VAEDecode",
+      "_meta": {
+        "title": "VAE解码"
+      }
+    },
+    "101": {
+      "inputs": {
+        "filename_prefix": "线程2",
+        "filename_keys": "%H-%M-%S",
+        "foldername_prefix": "",
+        "foldername_keys": "%F",
+        "delimiter": "-",
+        "save_job_data": "disabled",
+        "job_data_per_image": false,
+        "job_custom_text": "",
+        "save_metadata": true,
+        "counter_digits": 4,
+        "counter_position": "first",
+        "one_counter_per_folder": true,
+        "image_preview": true,
+        "output_ext": ".png",
+        "quality": 90,
+        "named_keys": false,
+        "images": [
+          "100",
+          0
+        ]
+      },
+      "class_type": "SaveImageExtended",
+      "_meta": {
+        "title": "💾 保存图像扩展 2.83"
+      }
+    },
+    "102": {
+      "inputs": {
+        "lora_name": "拉菲(sdxl).safetensors",
+        "strength_model": 0.8,
+        "strength_clip": 1,
+        "model": [
+          "17",
+          0
+        ],
+        "clip": [
+          "17",
+          1
+        ]
+      },
+      "class_type": "LoraLoader",
+      "_meta": {
+        "title": "加载LoRA"
+      }
+    }
+  },
+  "extra_data": {
+    "extra_pnginfo": {
+      "workflow": {
+        "last_node_id": 102,
+        "last_link_id": 136,
+        "nodes": [
+          {
+            "id": 4,
+            "type": "CLIPTextEncode",
+            "pos": [
+              -259.67694091796875,
+              -51.28164291381836
+            ],
+            "size": [
+              400,
+              200
+            ],
+            "flags": {},
+            "order": 8,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "clip",
+                "type": "CLIP",
+                "link": 128
+              }
+            ],
+            "outputs": [
+              {
+                "name": "CONDITIONING",
+                "type": "CONDITIONING",
+                "links": [
+                  135
+                ],
+                "slot_index": 0
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "CLIPTextEncode"
+            },
+            "widgets_values": [
+              "laffey ii \\\\(azur lane\\\\),long_hair,white hair,red eyes,blue hairband,blue ribbon,,(tsubasa tsubasa:0.6),unreviewed,khyle.xinzoruo,year 2023,nsfw,flat_chest，pale_skin，facing away,wide hips,hem,nude,anus,pussy,seiza,sitting on own feet,feet under ass,steaming feet,from behind,darkness,close-up,focus ass,High_contrast / Perfect_lighting / etc,light\\xa0rendering,floating light spot，best quality, amazing quality, very aesthetic, absurdres"
+            ]
+          },
+          {
+            "id": 5,
+            "type": "CLIPTextEncode",
+            "pos": [
+              -256.6614990234375,
+              205.33236694335938
+            ],
+            "size": [
+              400,
+              200
+            ],
+            "flags": {},
+            "order": 9,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "clip",
+                "type": "CLIP",
+                "link": 129
+              }
+            ],
+            "outputs": [
+              {
+                "name": "CONDITIONING",
+                "type": "CONDITIONING",
+                "links": [
+                  122,
+                  136
+                ],
+                "slot_index": 0
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "CLIPTextEncode"
+            },
+            "widgets_values": [
+              "worst quality, low quality, normal quality, low contrast, blurry, pixelated, overcompressed,underwear,Wrong number of fingers, stuck fingers, twisted limbs, wrong limbs, wrong eyes, asymmetrical eyes,Skin reflection, skin radiance,logo,text,\n"
+            ]
+          },
+          {
+            "id": 8,
+            "type": "VAEDecode",
+            "pos": [
+              1280.364013671875,
+              328.89813232421875
+            ],
+            "size": [
+              210,
+              46
+            ],
+            "flags": {
+              "collapsed": false
+            },
+            "order": 13,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "samples",
+                "type": "LATENT",
+                "link": 82
+              },
+              {
+                "name": "vae",
+                "type": "VAE",
+                "link": 23
+              }
+            ],
+            "outputs": [
+              {
+                "name": "IMAGE",
+                "type": "IMAGE",
+                "links": [
+                  58
+                ],
+                "slot_index": 0
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "VAEDecode"
+            },
+            "widgets_values": []
+          },
+          {
+            "id": 15,
+            "type": "EmptyLatentImage",
+            "pos": [
+              -589.6838989257812,
+              256.5370178222656
+            ],
+            "size": [
+              315,
+              106
+            ],
+            "flags": {},
+            "order": 7,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "width",
+                "type": "INT",
+                "link": 108,
+                "widget": {
+                  "name": "width"
+                }
+              },
+              {
+                "name": "height",
+                "type": "INT",
+                "link": 107,
+                "widget": {
+                  "name": "height"
+                }
+              }
+            ],
+            "outputs": [
+              {
+                "name": "LATENT",
+                "type": "LATENT",
+                "links": [
+                  63,
+                  124
+                ],
+                "slot_index": 0
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "EmptyLatentImage"
+            },
+            "widgets_values": [
+              1000,
+              1464,
+              2
+            ]
+          },
+          {
+            "id": 17,
+            "type": "unCLIPCheckpointLoader",
+            "pos": [
+              -680.9940795898438,
+              78.28706359863281
+            ],
+            "size": [
+              315,
+              118
+            ],
+            "flags": {},
+            "order": 3,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "MODEL",
+                "type": "MODEL",
+                "links": [
+                  132
+                ],
+                "slot_index": 0
+              },
+              {
+                "name": "CLIP",
+                "type": "CLIP",
+                "links": [
+                  133
+                ],
+                "slot_index": 1
+              },
+              {
+                "name": "VAE",
+                "type": "VAE",
+                "links": [
+                  23,
+                  127
+                ],
+                "slot_index": 2
+              },
+              {
+                "name": "CLIP_VISION",
+                "type": "CLIP_VISION",
+                "links": null
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "unCLIPCheckpointLoader"
+            },
+            "widgets_values": [
+              "noobaiXLNAIXL_vPred10Version.safetensors"
+            ]
+          },
+          {
+            "id": 39,
+            "type": "SaveImageExtended",
+            "pos": [
+              1691.932861328125,
+              244.24986267089844
+            ],
+            "size": [
+              400,
+              722
+            ],
+            "flags": {},
+            "order": 15,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "images",
+                "type": "IMAGE",
+                "link": 58
+              },
+              {
+                "name": "positive_text_opt",
+                "type": "STRING",
+                "link": null,
+                "widget": {
+                  "name": "positive_text_opt"
+                },
+                "shape": 7
+              },
+              {
+                "name": "negative_text_opt",
+                "type": "STRING",
+                "link": null,
+                "widget": {
+                  "name": "negative_text_opt"
+                },
+                "shape": 7
+              }
+            ],
+            "outputs": [],
+            "title": "💾 保存图像扩展 2.83",
+            "properties": {
+              "Node name for S&R": "SaveImageExtended"
+            },
+            "widgets_values": [
+              "线程1",
+              "%H-%M-%S",
+              "",
+              "%F",
+              "-",
+              "disabled",
+              false,
+              "",
+              true,
+              4,
+              "first",
+              true,
+              true,
+              ".png",
+              90,
+              false,
+              "",
+              ""
+            ]
+          },
+          {
+            "id": 53,
+            "type": "KSampler",
+            "pos": [
+              353.2768249511719,
+              114.45547485351562
+            ],
+            "size": [
+              315,
+              262
+            ],
+            "flags": {},
+            "order": 11,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "model",
+                "type": "MODEL",
+                "link": 131
+              },
+              {
+                "name": "positive",
+                "type": "CONDITIONING",
+                "link": 135
+              },
+              {
+                "name": "negative",
+                "type": "CONDITIONING",
+                "link": 136
+              },
+              {
+                "name": "latent_image",
+                "type": "LATENT",
+                "link": 63
+              }
+            ],
+            "outputs": [
+              {
+                "name": "LATENT",
+                "type": "LATENT",
+                "links": [
+                  82
+                ],
+                "slot_index": 0
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "KSampler"
+            },
+            "widgets_values": [
+              1053623968242719,
+              "randomize",
+              35,
+              7,
+              "euler",
+              "normal",
+              1
+            ]
+          },
+          {
+            "id": 84,
+            "type": "Switch any [Crystools]",
+            "pos": [
+              -1006.738525390625,
+              231.14041137695312
+            ],
+            "size": [
+              315,
+              78
+            ],
+            "flags": {},
+            "order": 4,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "on_true",
+                "type": "*",
+                "link": 111
+              },
+              {
+                "name": "on_false",
+                "type": "*",
+                "link": 112
+              },
+              {
+                "name": "boolean",
+                "type": "BOOLEAN",
+                "link": 118,
+                "widget": {
+                  "name": "boolean"
+                }
+              }
+            ],
+            "outputs": [
+              {
+                "name": "*",
+                "type": "*",
+                "links": [
+                  107
+                ],
+                "slot_index": 0
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "Switch any [Crystools]"
+            },
+            "widgets_values": [
+              true
+            ]
+          },
+          {
+            "id": 94,
+            "type": "Primitive integer [Crystools]",
+            "pos": [
+              -1524.103759765625,
+              146.18492126464844
+            ],
+            "size": [
+              315,
+              58
+            ],
+            "flags": {},
+            "order": 0,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "int",
+                "type": "INT",
+                "links": [
+                  109,
+                  112
+                ],
+                "slot_index": 0
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "Primitive integer [Crystools]"
+            },
+            "widgets_values": [
+              1000
+            ]
+          },
+          {
+            "id": 95,
+            "type": "Switch any [Crystools]",
+            "pos": [
+              -1007.3460083007812,
+              106.38915252685547
+            ],
+            "size": [
+              315,
+              78
+            ],
+            "flags": {},
+            "order": 5,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "on_true",
+                "type": "*",
+                "link": 109
+              },
+              {
+                "name": "on_false",
+                "type": "*",
+                "link": 116
+              },
+              {
+                "name": "boolean",
+                "type": "BOOLEAN",
+                "link": 119,
+                "widget": {
+                  "name": "boolean"
+                }
+              }
+            ],
+            "outputs": [
+              {
+                "name": "*",
+                "type": "*",
+                "links": [
+                  108
+                ],
+                "slot_index": 0
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "Switch any [Crystools]"
+            },
+            "widgets_values": [
+              true
+            ]
+          },
+          {
+            "id": 96,
+            "type": "Primitive integer [Crystools]",
+            "pos": [
+              -1524.1036376953125,
+              253.1849365234375
+            ],
+            "size": [
+              315,
+              58
+            ],
+            "flags": {},
+            "order": 1,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "int",
+                "type": "INT",
+                "links": [
+                  111,
+                  116
+                ],
+                "slot_index": 0
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "Primitive integer [Crystools]"
+            },
+            "widgets_values": [
+              1464
+            ]
+          },
+          {
+            "id": 97,
+            "type": "Primitive boolean [Crystools]",
+            "pos": [
+              -601.2947998046875,
+              405.48101806640625
+            ],
+            "size": [
+              315,
+              58
+            ],
+            "flags": {},
+            "order": 2,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "boolean",
+                "type": "BOOLEAN",
+                "links": [
+                  118,
+                  119
+                ],
+                "slot_index": 0
+              }
+            ],
+            "title": "尺寸，true为竖向",
+            "properties": {
+              "Node name for S&R": "Primitive boolean [Crystools]"
+            },
+            "widgets_values": [
+              true
+            ]
+          },
+          {
+            "id": 98,
+            "type": "CLIPTextEncode",
+            "pos": [
+              -259.5383605957031,
+              442.7599182128906
+            ],
+            "size": [
+              400,
+              200
+            ],
+            "flags": {},
+            "order": 10,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "clip",
+                "type": "CLIP",
+                "link": 130
+              }
+            ],
+            "outputs": [
+              {
+                "name": "CONDITIONING",
+                "type": "CONDITIONING",
+                "links": [
+                  121
+                ],
+                "slot_index": 0
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "CLIPTextEncode"
+            },
+            "widgets_values": [
+              "laffey ii \\\\(azur lane\\\\),long_hair,white hair,red eyes,blue hairband,blue ribbon,,(tsubasa tsubasa:0.8),white stockings, no underwear, solo, loli, White socks,sneakers,Chinese cultivation battle, martial arts, Taoist magic, sword fighting, mystical energy, glowing spiritual aura, ancient Chinese landscape, ethereal fog, flying through the air, powerful energy blasts, elemental forces, graceful movements, intense combat, traditional robes, dramatic atmosphere, magical sword strikes ,breasts,Pussy,anus，best quality, amazing quality, very aesthetic, absurdres"
+            ]
+          },
+          {
+            "id": 99,
+            "type": "KSampler",
+            "pos": [
+              321.42559814453125,
+              473.306640625
+            ],
+            "size": [
+              315,
+              262
+            ],
+            "flags": {},
+            "order": 12,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "model",
+                "type": "MODEL",
+                "link": 134
+              },
+              {
+                "name": "positive",
+                "type": "CONDITIONING",
+                "link": 121
+              },
+              {
+                "name": "negative",
+                "type": "CONDITIONING",
+                "link": 122
+              },
+              {
+                "name": "latent_image",
+                "type": "LATENT",
+                "link": 124
+              }
+            ],
+            "outputs": [
+              {
+                "name": "LATENT",
+                "type": "LATENT",
+                "links": [
+                  126
+                ],
+                "slot_index": 0
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "KSampler"
+            },
+            "widgets_values": [
+              984685023395270,
+              "randomize",
+              35,
+              7,
+              "euler",
+              "normal",
+              1
+            ]
+          },
+          {
+            "id": 100,
+            "type": "VAEDecode",
+            "pos": [
+              754.1741333007812,
+              538.38818359375
+            ],
+            "size": [
+              210,
+              46
+            ],
+            "flags": {
+              "collapsed": false
+            },
+            "order": 14,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "samples",
+                "type": "LATENT",
+                "link": 126
+              },
+              {
+                "name": "vae",
+                "type": "VAE",
+                "link": 127
+              }
+            ],
+            "outputs": [
+              {
+                "name": "IMAGE",
+                "type": "IMAGE",
+                "links": [
+                  125
+                ],
+                "slot_index": 0
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "VAEDecode"
+            },
+            "widgets_values": []
+          },
+          {
+            "id": 101,
+            "type": "SaveImageExtended",
+            "pos": [
+              1090.72265625,
+              462.2098083496094
+            ],
+            "size": [
+              400,
+              722
+            ],
+            "flags": {},
+            "order": 16,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "images",
+                "type": "IMAGE",
+                "link": 125
+              },
+              {
+                "name": "positive_text_opt",
+                "type": "STRING",
+                "link": null,
+                "widget": {
+                  "name": "positive_text_opt"
+                },
+                "shape": 7
+              },
+              {
+                "name": "negative_text_opt",
+                "type": "STRING",
+                "link": null,
+                "widget": {
+                  "name": "negative_text_opt"
+                },
+                "shape": 7
+              }
+            ],
+            "outputs": [],
+            "title": "💾 保存图像扩展 2.83",
+            "properties": {
+              "Node name for S&R": "SaveImageExtended"
+            },
+            "widgets_values": [
+              "线程2",
+              "%H-%M-%S",
+              "",
+              "%F",
+              "-",
+              "disabled",
+              false,
+              "",
+              true,
+              4,
+              "first",
+              true,
+              true,
+              ".png",
+              90,
+              false,
+              "",
+              ""
+            ]
+          },
+          {
+            "id": 102,
+            "type": "LoraLoader",
+            "pos": [
+              -700.1055908203125,
+              -119.75361633300781
+            ],
+            "size": [
+              315,
+              126
+            ],
+            "flags": {},
+            "order": 6,
+            "mode": 0,
+            "inputs": [
+              {
+                "name": "model",
+                "type": "MODEL",
+                "link": 132
+              },
+              {
+                "name": "clip",
+                "type": "CLIP",
+                "link": 133
+              }
+            ],
+            "outputs": [
+              {
+                "name": "MODEL",
+                "type": "MODEL",
+                "links": [
+                  131,
+                  134
+                ],
+                "slot_index": 0
+              },
+              {
+                "name": "CLIP",
+                "type": "CLIP",
+                "links": [
+                  128,
+                  129,
+                  130
+                ],
+                "slot_index": 1
+              }
+            ],
+            "properties": {
+              "Node name for S&R": "LoraLoader"
+            },
+            "widgets_values": [
+              "拉菲(sdxl).safetensors",
+              0.8,
+              1
+            ]
+          }
+        ],
+        "links": [
+          [
+            23,
+            17,
+            2,
+            8,
+            1,
+            "VAE"
+          ],
+          [
+            58,
+            8,
+            0,
+            39,
+            0,
+            "IMAGE"
+          ],
+          [
+            63,
+            15,
+            0,
+            53,
+            3,
+            "LATENT"
+          ],
+          [
+            82,
+            53,
+            0,
+            8,
+            0,
+            "LATENT"
+          ],
+          [
+            107,
+            84,
+            0,
+            15,
+            1,
+            "INT"
+          ],
+          [
+            108,
+            95,
+            0,
+            15,
+            0,
+            "INT"
+          ],
+          [
+            109,
+            94,
+            0,
+            95,
+            0,
+            "*"
+          ],
+          [
+            111,
+            96,
+            0,
+            84,
+            0,
+            "*"
+          ],
+          [
+            112,
+            94,
+            0,
+            84,
+            1,
+            "*"
+          ],
+          [
+            116,
+            96,
+            0,
+            95,
+            1,
+            "*"
+          ],
+          [
+            118,
+            97,
+            0,
+            84,
+            2,
+            "BOOLEAN"
+          ],
+          [
+            119,
+            97,
+            0,
+            95,
+            2,
+            "BOOLEAN"
+          ],
+          [
+            121,
+            98,
+            0,
+            99,
+            1,
+            "CONDITIONING"
+          ],
+          [
+            122,
+            5,
+            0,
+            99,
+            2,
+            "CONDITIONING"
+          ],
+          [
+            124,
+            15,
+            0,
+            99,
+            3,
+            "LATENT"
+          ],
+          [
+            125,
+            100,
+            0,
+            101,
+            0,
+            "IMAGE"
+          ],
+          [
+            126,
+            99,
+            0,
+            100,
+            0,
+            "LATENT"
+          ],
+          [
+            127,
+            17,
+            2,
+            100,
+            1,
+            "VAE"
+          ],
+          [
+            128,
+            102,
+            1,
+            4,
+            0,
+            "CLIP"
+          ],
+          [
+            129,
+            102,
+            1,
+            5,
+            0,
+            "CLIP"
+          ],
+          [
+            130,
+            102,
+            1,
+            98,
+            0,
+            "CLIP"
+          ],
+          [
+            131,
+            102,
+            0,
+            53,
+            0,
+            "MODEL"
+          ],
+          [
+            132,
+            17,
+            0,
+            102,
+            0,
+            "MODEL"
+          ],
+          [
+            133,
+            17,
+            1,
+            102,
+            1,
+            "CLIP"
+          ],
+          [
+            134,
+            102,
+            0,
+            99,
+            0,
+            "MODEL"
+          ],
+          [
+            135,
+            4,
+            0,
+            53,
+            1,
+            "CONDITIONING"
+          ],
+          [
+            136,
+            5,
+            0,
+            53,
+            2,
+            "CONDITIONING"
+          ]
+        ],
+        "groups": [],
+        "config": {
+          "links_ontop": false
+        },
+        "extra": {
+          "ds": {
+            "scale": 0.5644739300537773,
+            "offset": [
+              1589.6802723372396,
+              329.90148220810386
+            ]
+          },
+          "node_versions": {
+            "comfy-core": "0.3.14",
+            "save-image-extended-comfyui": "54b30b9c1a33eb34ff11c2a3a5d7582c5ac46364",
+            "comfyui-crystools": "72e2e9af4a6b9a58ca5d753cacff37ba1ff9bfa8"
+          }
+        },
+        "version": 0.4
+      }
+    }
+  }
+}
