@@ -16,3 +16,4 @@ tags*.json
 /data/序号.json
 /dsata/temp
 __pycache__
+__pycache__/
