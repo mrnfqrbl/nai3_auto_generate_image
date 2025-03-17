@@ -17,3 +17,4 @@ tags*.json
 /dsata/temp
 __pycache__
 __pycache__/
+*.pyc
