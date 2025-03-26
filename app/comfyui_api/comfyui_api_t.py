@@ -9,9 +9,8 @@ from urllib.parse import urljoin  # 导入 urljoin 函数
 import requests  # 导入 requests 模块
 from loguru import logger  # 添加日志模块
 
+
 #项目模块导入
-from app.utils.fozu import 佛祖保佑  # 添加佛祖保佑函数
-from app.utils.tag import 提示词生成器  # 添加提示词生成器类
 
 def 全局异常处理函数(exctype, value, tb):
     """
@@ -40,7 +39,8 @@ class ComfyUI_API:  # 类名改为 ComfyUI_API
         self.根目录=参数.get("根目录")
         工作流模板=参数.get("工作流模板")
         self.保存目录=参数.get("保存目录")
-        print(type(self.保存目录))
+        self.单批次数=参数.get("单批次数")
+        logger.debug(f"初始化ComfyUI API实例 - 单批次数:{self.单批次数}")  # 记录调试信息
         """初始化API实例"""
         # 加载基础请求体（使用深拷贝避免原始数据被修改）
         # with open(f"{根目录}/data/comfyui_json.json", "r", encoding="utf-8") as f:  # 修改变量名
@@ -50,7 +50,7 @@ class ComfyUI_API:  # 类名改为 ComfyUI_API
 
         logger.debug("ComfyUI API实例初始化完成")  # 记录调试信息
 
-    def 生成请求体副本(self,输入):
+    def 生成请求体副本(self,输入,):
         """生成包含新提示词的请求体副本"""
         请求体副本 = copy.deepcopy(self.请求体)  # 修改变量名
 
@@ -69,7 +69,7 @@ class ComfyUI_API:  # 类名改为 ComfyUI_API
             提示词2 = self.提示词生成器实例.提示词组合(sd=True,)  # 修改变量名
 
 
-        logger.info(f"生成提示词对 - i号:[{提示词1[:20]}...] 2号:[{提示词2[:20]}...]")  # 记录调试信息
+        logger.info(f"生成提示词对 - i号:[{提示词1[:200]}...] 2号:[{提示词2[:200]}...]")  # 记录调试信息
 
         # 更新提示词节点
         def 更新节点(节点id, 内容):  # 修改函数名
@@ -97,6 +97,31 @@ class ComfyUI_API:  # 类名改为 ComfyUI_API
             for i, id in enumerate(saveS):
                 根路径 = ["extra_data", "extra_pnginfo", "workflow", "nodes", {"id": id}, "widgets_values", 2]
                 请求体副本 = self.更新字典信息(根路径, 内容=self.保存目录, 请求体副本=请求体副本)
+        文件名ids = [39,101]
+        def 生成随机ID():
+            import random
+            import string
+            """
+            生成一个包含 5 位随机大小写数字字母的 ID，格式为 "mrnf-{随机字符串}"。
+            """
+            # 定义包含所有可能字符的字符串
+            字符集 = string.ascii_letters + string.digits  # 大小写字母 + 数字
+
+            # 使用 random.choices() 从字符集中随机选择 5 个字符
+            随机ID = ''.join(random.choices(字符集, k=5))
+            #附加时间戳
+            随机ID = "%F"+",%H-%M-%S" +","+ 随机ID
+
+
+        #
+
+            return 随机ID
+        for i, id in enumerate(saveS):
+            根路径 = ["prompt",str(id),"inputs", "filename_keys"]
+            请求体副本 = self.更新字典信息(根路径, 内容=生成随机ID(), 请求体副本=请求体副本)
+        for i, id in enumerate(saveS):
+            根路径 = ["extra_data", "extra_pnginfo", "workflow", "nodes", {"id": id}, "widgets_values", 1]
+            请求体副本 = self.更新字典信息(根路径, 内容=生成随机ID(), 请求体副本=请求体副本)
         # if os.path.exists(f"{self.根目录}/data/temp/qq.json"):
         #     os.remove(f"{self.根目录}/data/temp/qq.json")
         # os.makedirs(f"{self.根目录}/data/temp", exist_ok=True)
@@ -110,10 +135,17 @@ class ComfyUI_API:  # 类名改为 ComfyUI_API
         for i, id in enumerate(采样节点ids):
             根路径 = ["prompt",str(id),"inputs", "seed"]
             请求体副本 = self.更新字典信息(根路径, 内容=种子函数(), 请求体副本=请求体副本)
+
         for i, id in enumerate(采样节点ids):
             根路径 = ["extra_data", "extra_pnginfo", "workflow", "nodes", {"id": id}, "widgets_values", 0]
             请求体副本 = self.更新字典信息(根路径, 内容=种子函数(), 请求体副本=请求体副本)
-
+        if isinstance(self.单批次数, int):
+            p根路径 = ["prompt","15","inputs", "batch_size"]
+            请求体副本 = self.更新字典信息(p根路径, 内容=self.单批次数, 请求体副本=请求体副本)
+            e根路径 = ["extra_data", "extra_pnginfo", "workflow", "nodes", {"id": 15}, "widgets_values", 2]
+            请求体副本 = self.更新字典信息(e根路径, 内容=self.单批次数, 请求体副本=请求体副本)
+            aa=请求体副本.get("prompt").get("15").get("inputs").get("batch_size")
+            logger.info(f"单批次数设置为 {aa}")  # 记录调试信息
         logger.info("请求体副本生成完成")  # 记录调试信息
         return 请求体副本  # 修改变量名
 
@@ -246,12 +278,12 @@ class ComfyUI_API:  # 类名改为 ComfyUI_API
 
         return None
 
-    def 单次生成(self, url,输入):  # 修改函数名
+    def 单次生成(self, url,输入,):  # 修改函数名
         """单次生成任务"""
 
         return self.发送请求(url, self.生成请求体副本(输入))  # 修改函数名
 
-    def 批量生成(self, url, 批量生成次数=2,输入:dict =None):  # 修改函数名
+    def 批量生成(self, url, 批量生成次数,输入,):  # 修改函数名
         """批量生成任务"""
         if not url:
             logger.warning("空URL")  # 记录警告信息
@@ -298,12 +330,15 @@ def 多实例多URL批量生成(参数: Dict[str, Any]):
     提示词生成器实例 = 参数.get("提示词生成器实例")
     实例输入 = 参数.get("实例输入")
 
+    # logger.debug(f"单批次数设置为 {单批次数}")  # 记录调试信息
+    # logger.debug(f"参数: {参数}")  # 记录调试信息
+
 
     实例字典 = {}
     lock = threading.Lock()
 
 
-    def 线程函数(url: str, 批量生成次数: int, 输入: Dict[str, Any], 工作流模板: str, thread_index: int, 保存目录: str):
+    def 线程函数(url: str, 批量生成次数: int, 输入: Dict[str, Any], 工作流模板: str, thread_index: int, 保存目录: str,单批次数:int):
         """线程函数，创建 ComfyUI_API 实例并执行批量生成任务"""
         try:
             apiname = f"ComfyUI_API_{thread_index}"
@@ -312,7 +347,9 @@ def 多实例多URL批量生成(参数: Dict[str, Any]):
                 "客户端id": 客户端id,
                 "根目录": 根目录,
                 "工作流模板": 工作流模板,
-                "保存目录": 保存目录
+                "保存目录": 保存目录,
+                "单批次数": 单批次数,
+
             }
 
             with lock:
@@ -323,6 +360,7 @@ def 多实例多URL批量生成(参数: Dict[str, Any]):
     线程列表 = []
     for index, i in enumerate(实例输入):
         数量 = i["数量"]
+        单批次数 = i.get("单批次数")
         if 数量 <= 0:
             logger.warning(f"线程 {index} 的数量为 0，跳过")
             continue
@@ -335,7 +373,7 @@ def 多实例多URL批量生成(参数: Dict[str, Any]):
 
         t = threading.Thread(
             target=线程函数,
-            args=(url, 批量生成次数, 输入, 工作流模板, index,保存目录),  # 传递工作流模板和索引
+            args=(url, 批量生成次数, 输入, 工作流模板, index,保存目录,单批次数 ),  # 传递工作流模板和索引
             name=f"Thread-{url}"
         )
         线程列表.append(t)

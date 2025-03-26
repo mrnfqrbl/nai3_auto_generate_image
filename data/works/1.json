@@ -62,7 +62,7 @@
     },
     "17": {
       "inputs": {
-        "ckpt_name": "ntrMIXIllustriousXL_xiii.safetensors"
+        "ckpt_name": "ntrMIXIllustriousXL_xiii/ntrMIXIllustriousXL_xiii.safetensors"
       },
       "class_type": "unCLIPCheckpointLoader",
       "_meta": {
@@ -514,7 +514,7 @@
               "Node name for S&R": "unCLIPCheckpointLoader"
             },
             "widgets_values": [
-              "ntrMIXIllustriousXL_xiii.safetensors"
+              "ntrMIXIllustriousXL_xiii/ntrMIXIllustriousXL_xiii.safetensors"
             ]
           },
           {

@@ -102,7 +102,7 @@
         "seed": 1053623968242719,
         "steps": 35,
         "cfg": 7,
-        "sampler_name": "euler",
+        "sampler_name": "euler_ancestral",
         "scheduler": "normal",
         "denoise": 1,
         "model": [
@@ -212,7 +212,7 @@
         "seed": 984685023395270,
         "steps": 35,
         "cfg": 7,
-        "sampler_name": "euler",
+        "sampler_name": "euler_ancestral",
         "scheduler": "normal",
         "denoise": 1,
         "model": [
@@ -652,7 +652,7 @@
               "randomize",
               35,
               7,
-              "euler",
+              "euler_ancestral",
               "normal",
               1
             ]
@@ -951,7 +951,7 @@
               "randomize",
               35,
               7,
-              "euler",
+              "euler_ancestral",
               "normal",
               1
             ]

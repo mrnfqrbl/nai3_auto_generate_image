@@ -25,6 +25,7 @@ def global_exception_handler(exctype, value, tb):
     # 选择是否退出程序
     sys.exit(1)  # 或者使用 `exit(1)` 退出程序
 
+
 # 注册全局异常处理
 sys.excepthook = global_exception_handler
 
